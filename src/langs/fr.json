@@ -32,10 +32,10 @@
       "TASK_RULES_2": "Lorsque vous voyez un nombre qui correspond au nombre de 2 positions en arrière, appuyez sur la barre d'espace (ou cliquez avec la souris) aussi rapidement que possible.",
       "TASK_RULES_3": "Lorsque vous voyez un nombre qui correspond au nombre de 3 positions en arrière, appuyez sur la barre d'espace (ou cliquez avec la souris) aussi rapidement que possible.",
       "TASK_RULES_4": "Lorsque vous voyez un nombre qui correspond au nombre de 4 positions en arrière, appuyez sur la barre d'espace (ou cliquez avec la souris) aussi rapidement que possible.",
-      "EXAMPLES_1": "Exemple: Si vous voyez la séquence 3 - 7 - 3, vous devez répondre lorsque vous voyez le deuxième 3 car il correspond au 3 d'1 position en arrière.",
-      "EXAMPLES_2": "Exemple: Si vous voyez la séquence 5 - 2 - 8 - 5, vous devez répondre lorsque vous voyez le deuxième 5 car il correspond au 5 de 2 positions en arrière. Une séquence comme 8 - 3 - 8 n'est qu'un appariement 1-back ; pour du 2-back, vous ne répondez PAS.",
-      "EXAMPLES_3": "Exemple: Si vous voyez la séquence 1 - 4 - 7 - 2 - 1, vous devez répondre lorsque vous voyez le deuxième 1 car il correspond au 1 de 3 positions en arrière.",
-      "EXAMPLES_4": "Exemple: Si vous voyez la séquence 6 - 3 - 9 - 4 - 6, vous devez répondre lorsque vous voyez le deuxième 6 car il correspond au 6 de 4 positions en arrière.",
+      "EXAMPLES_1": "Exemple : Si vous voyez la séquence 3 - 3, vous devez répondre lorsque vous voyez le deuxième 3 car il correspond au 3 d'1 position en arrière. Une séquence comme 4 - 3 - 4 n'est pas une correspondance, car ils ne sont pas immédiatement adjacents, donc vous ne répondriez PAS.",
+      "EXAMPLES_2": "Exemple : Si vous voyez la séquence 3 - 7 - 3, vous devez répondre lorsque vous voyez le deuxième 3 car il correspond au 3 de 2 positions en arrière. Une séquence comme 4 - 4 n'est pas une correspondance, car ils sont immédiatement adjacents, donc vous ne répondriez PAS.",
+      "EXAMPLES_3": "Exemple : Si vous voyez la séquence 5 - 2 - 8 - 5, vous devez répondre lorsque vous voyez le deuxième 5 car il correspond au 5 de 3 positions en arrière. Une séquence comme 8 - 3 - 8 n'est qu'une correspondance d'1-back, donc pour 2-back vous ne répondriez PAS.",
+      "EXAMPLES_4": "Exemple : Si vous voyez la séquence 1 - 4 - 7 - 2 - 1, vous devez répondre lorsque vous voyez le deuxième 1 car il correspond au 1 de 4 positions en arrière.",
       "RESPONSE_INSTRUCTIONS_TITLE": "Comment Répondre",
       "RESPONSE_METHOD": "Méthode de réponse:",
       "RESPONSE_WHEN_MATCH": "Lorsque vous voyez un nombre qui correspond au nombre cible d'n positions en arrière, répondez immédiatement en appuyant sur la barre d'espace ou en cliquant avec la souris.",
@@ -70,6 +70,7 @@
       "COUNTDOWN": "Reprise dans:",
       "PRESS_TO_CONTINUE": "Ou appuyez sur la barre d'espace pour continuer immédiatement"
     },
+    "PROGRESS_BAR_MESSAGE": "Progression de l'Achèvement",
     "SETTINGS": {
       "NBACK_TITLE": "Paramètres de la Tâche N-Back",
       "NBACK_LEVEL": "Niveau N-Back",

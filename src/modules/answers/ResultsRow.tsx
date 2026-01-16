@@ -1,5 +1,6 @@
 import { FC } from 'react';
 
+import DeleteIcon from '@mui/icons-material/Delete';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { IconButton } from '@mui/material';
 import TableCell from '@mui/material/TableCell';
@@ -13,6 +14,7 @@ export type ResultData = {
   totalTrials?: number;
   length: number;
   rawDataDownload: () => void;
+  onDelete: () => void;
 };
 
 const ResultsRow: FC<ResultData> = ({
@@ -23,6 +25,7 @@ const ResultsRow: FC<ResultData> = ({
   totalTrials,
   length,
   rawDataDownload,
+  onDelete,
 }) => (
   <TableRow>
     <TableCell>{name}</TableCell>
@@ -39,6 +42,21 @@ const ResultsRow: FC<ResultData> = ({
         }}
       >
         <FileDownloadIcon />
+      </IconButton>
+      <IconButton
+        onClick={(): void => {
+          if (
+            // eslint-disable-next-line no-alert
+            window.confirm(
+              `Are you sure you want to delete results for ${name}?`,
+            )
+          ) {
+            onDelete();
+          }
+        }}
+        color="error"
+      >
+        <DeleteIcon />
       </IconButton>
     </TableCell>
   </TableRow>

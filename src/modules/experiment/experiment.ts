@@ -19,9 +19,9 @@ import { buildIntroduction } from './parts/introduction';
 import { buildPractice } from './parts/practice';
 import { buildMainTask } from './parts/task-core';
 import './styles/main.scss';
-import { PROGRESS_BAR } from './utils/constants';
+import { PROGRESS_BAR_MESSAGE } from './utils/constants';
 import { Timeline, Trial } from './utils/types';
-import { changeProgressBar, resolveLink } from './utils/utils';
+import { resolveLink } from './utils/utils';
 
 /**
  * End page with optional link to next experiment
@@ -165,7 +165,7 @@ export async function run({
   const jsPsych = initJsPsych({
     show_progress_bar: true,
     auto_update_progress_bar: false,
-    message_progress_bar: PROGRESS_BAR.PROGRESS_BAR_INTRODUCTION,
+    progress_bar_message: PROGRESS_BAR_MESSAGE,
     display_element: 'jspsych-display-element',
   });
 
@@ -194,8 +194,8 @@ export async function run({
   // Introduction
   timeline.push({
     timeline: buildIntroduction(state),
-    on_timeline_finish() {
-      changeProgressBar('Instructions Complete', 0.2, jsPsych);
+    on_timeline_start() {
+      if (jsPsych.progressBar) jsPsych.progressBar.progress = 0.0;
     },
   });
 
@@ -203,8 +203,8 @@ export async function run({
   if (!state.getGeneralSettings().skipPractice) {
     timeline.push({
       timeline: buildPractice(state, updateDataWithSettings, jsPsych),
-      on_timeline_finish() {
-        changeProgressBar('Practice Complete', 0.4, jsPsych);
+      on_timeline_start() {
+        if (jsPsych.progressBar) jsPsych.progressBar.progress = 0.2;
       },
     });
   }
@@ -214,10 +214,9 @@ export async function run({
     timeline: buildMainTask(state, updateDataWithSettings, jsPsych),
     on_timeline_start() {
       state.startMainTask();
-      changeProgressBar('Main Task', 0.5, jsPsych);
-    },
-    on_timeline_finish() {
-      changeProgressBar('Task Complete', 1.0, jsPsych);
+      if (jsPsych.progressBar) {
+        jsPsych.progressBar.progress = 0.5;
+      }
     },
   });
 
@@ -232,6 +231,9 @@ export async function run({
       on_load() {
         window.removeEventListener('beforeunload', blockUnload);
         updateDataWithSettings(jsPsych.data.get());
+        if (jsPsych.progressBar) {
+          jsPsych.progressBar.progress = 1.0;
+        }
       },
     });
   }

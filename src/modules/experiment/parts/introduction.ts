@@ -12,14 +12,6 @@ const t = i18n.t.bind(i18n);
  */
 const experimentBeginTrial = (state: ExperimentState): Trial => {
   const { nLevel } = state.getNBackSettings();
-  const { responseKey } = state.getNBackSettings();
-
-  let responseText = 'spacebar';
-  if (responseKey === 'mouse') {
-    responseText = 'mouse click';
-  } else if (responseKey === 'both') {
-    responseText = 'spacebar or mouse click';
-  }
 
   return {
     type: FullscreenPlugin,
@@ -29,7 +21,6 @@ const experimentBeginTrial = (state: ExperimentState): Trial => {
         <h1>${t('NBACK.WELCOME_TITLE')}</h1>
         <p>${t('NBACK.WELCOME_MESSAGE')}</p>
         <p>${t(`NBACK.TASK_DESCRIPTION_${nLevel}`)}</p>
-        <p>${t('NBACK.RESPONSE_METHOD')}: <strong>${responseText}</strong></p>
       </div>
     `,
     fullscreen_mode: true,

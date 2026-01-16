@@ -15,9 +15,7 @@ import Typography from '@mui/material/Typography';
 import { format } from 'date-fns';
 import { DataCollection } from 'jspsych';
 
-import { hooks } from '@/config/queryClient';
-
-import { ExperimentResult } from '../config/appResults';
+import useExperimentResults from '../context/ExperimentContext';
 import ResultsRow from './ResultsRow';
 
 const downloadJson: (json: string, filename: string) => void = (
@@ -36,11 +34,12 @@ const downloadJson: (json: string, filename: string) => void = (
 };
 
 const ResultsView: FC = () => {
-  const { data: appData } = hooks.useAppData<ExperimentResult>();
+  const { allExperimentResultsAppData, deleteExperimentResult } =
+    useExperimentResults();
 
   const allData = (): string => {
     const completeJSON: string[] = [];
-    appData?.forEach((data) => {
+    allExperimentResultsAppData?.forEach((data) => {
       const experimentJSON = data.data.rawData
         ? new DataCollection(data.data.rawData.trials)
         : undefined;
@@ -77,11 +76,11 @@ const ResultsView: FC = () => {
               <TableCell>Accuracy (%)</TableCell>
               <TableCell>Correct/Total</TableCell>
               <TableCell>Data Size</TableCell>
-              <TableCell>Export</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {appData?.map((data) => {
+            {allExperimentResultsAppData?.map((data) => {
               const rawData = data.data.rawData
                 ? new DataCollection(data.data.rawData.trials)
                 : undefined;
@@ -89,9 +88,13 @@ const ResultsView: FC = () => {
               const correctTrials = trials.filter(
                 (trial: { correct?: boolean }) => trial.correct === true,
               );
+              const totalTrials = trials.filter(
+                (trial: { correct?: boolean }) =>
+                  trial.correct === true || trial.correct === false,
+              );
               const accuracy =
-                trials.length > 0
-                  ? (correctTrials.length / trials.length) * 100
+                totalTrials.length > 0
+                  ? (correctTrials.length / totalTrials.length) * 100
                   : 0;
               return (
                 <ResultsRow
@@ -100,7 +103,7 @@ const ResultsView: FC = () => {
                   nBackLevel={data.data.settings?.nBackSettings?.nLevel}
                   accuracy={accuracy}
                   correctCount={correctTrials.length}
-                  totalTrials={trials.length}
+                  totalTrials={totalTrials.length}
                   length={rawData ? rawData.count() : 0}
                   rawDataDownload={() =>
                     downloadJson(
@@ -108,6 +111,7 @@ const ResultsView: FC = () => {
                       `nback_${data.creator?.name}_${data.updatedAt}_${format(new Date(), 'yyyyMMdd_HH.mm')}.json`,
                     )
                   }
+                  onDelete={() => deleteExperimentResult(data.id)}
                 />
               );
             })}
