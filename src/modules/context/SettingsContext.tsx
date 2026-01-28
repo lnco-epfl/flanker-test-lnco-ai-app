@@ -9,15 +9,16 @@ export type GeneralSettingsType = {
   skipPractice: boolean;
 };
 
-export type NBackSettingsType = {
-  nLevel: 1 | 2 | 3 | 4;
-  numberOfTrials: number;
-  numberOfPracticeTrials: number;
-  customSequence: string; // comma-separated numbers, empty = random
-  customPracticeSequence: string; // comma-separated numbers for practice, empty = random
-  displayDuration: number; // milliseconds
-  interStimulusInterval: number; // milliseconds
-  responseKey: 'space' | 'mouse' | 'both';
+export type FlankerSettingsType = {
+  numberOfTrials: number; // total number of trials in main task
+  numberOfPracticeTrials: number; // number of practice trials
+  congruentPercentage: number; // percentage of congruent trials (0-100)
+  incongruentPercentage: number; // percentage of incongruent trials (0-100)
+  neutralPercentage: number; // percentage of neutral trials (0-100)
+  displayDuration: number; // stimulus display duration in milliseconds
+  interTrialInterval: number; // time between trials in milliseconds
+  responseKey: 'arrows' | 'mouse' | 'both'; // how to respond
+  showFixationCross: boolean; // show + in center during inter-trial interval
 };
 
 export type BreakSettingsType = {
@@ -46,7 +47,7 @@ export type NextStepSettings = {
 // mapping between Setting names and their data type
 export type AllSettingsType = {
   generalSettings: GeneralSettingsType;
-  nBackSettings: NBackSettingsType;
+  flankerSettings: FlankerSettingsType;
   breakSettings: BreakSettingsType;
   photoDiodeSettings: PhotoDiodeSettings;
   nextStepSettings: NextStepSettings;
@@ -59,19 +60,20 @@ const defaultSettingsValues: AllSettingsType = {
     skipInstructions: false,
     skipPractice: false,
   },
-  nBackSettings: {
-    nLevel: 2,
-    numberOfTrials: 50,
+  flankerSettings: {
+    numberOfTrials: 60,
     numberOfPracticeTrials: 10,
-    customSequence: '',
-    customPracticeSequence: '',
-    displayDuration: 500,
-    interStimulusInterval: 2000,
-    responseKey: 'space',
+    congruentPercentage: 33,
+    incongruentPercentage: 33,
+    neutralPercentage: 34,
+    displayDuration: 2000,
+    interTrialInterval: 2000,
+    responseKey: 'arrows',
+    showFixationCross: true,
   },
   breakSettings: {
     enableBreaks: false,
-    breakFrequency: 25,
+    breakFrequency: 30,
     breakDuration: 30,
   },
   photoDiodeSettings: {
@@ -89,7 +91,7 @@ const defaultSettingsValues: AllSettingsType = {
 // list of the settings names
 const ALL_SETTING_NAMES = [
   'generalSettings',
-  'nBackSettings',
+  'flankerSettings',
   'breakSettings',
   'photoDiodeSettings',
   'nextStepSettings',

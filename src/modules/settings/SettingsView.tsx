@@ -7,22 +7,22 @@ import { isEqual } from 'lodash';
 
 import {
   BreakSettingsType,
+  FlankerSettingsType,
   GeneralSettingsType,
-  NBackSettingsType,
   NextStepSettings,
   PhotoDiodeSettings,
   useSettings,
 } from '../context/SettingsContext';
 import BreakSettingsView from './BreakSettingsView';
+import FlankerSettingsView from './FlankerSettingsView';
 import GeneralSettingsView from './GeneralSettingsView';
-import NBackSettingsView from './NBackSettingsView';
 import NextStepSettingsView from './NextStepSettings';
 import PhotoDiodeSettingsView from './PhotoDiodeSettingsView';
 
 const SettingsView: FC = () => {
   const {
     generalSettings: generalSettingsSaved,
-    nBackSettings: nBackSettingsSaved,
+    flankerSettings: flankerSettingsSaved,
     breakSettings: breakSettingsSaved,
     photoDiodeSettings: photoDiodeSettingsSaved,
     nextStepSettings: nextStepSettingsSaved,
@@ -31,8 +31,10 @@ const SettingsView: FC = () => {
 
   const [generalSettings, updateGeneralSettings] =
     useState<GeneralSettingsType>(generalSettingsSaved);
-  const [nBackSettings] = useState<NBackSettingsType>(nBackSettingsSaved);
-  const [breakSettings] = useState<BreakSettingsType>(breakSettingsSaved);
+  const [flankerSettings, updateFlankerSettings] =
+    useState<FlankerSettingsType>(flankerSettingsSaved);
+  const [breakSettings, updateBreakSettings] =
+    useState<BreakSettingsType>(breakSettingsSaved);
   const [photoDiodeSettings, updatePhotoDiodeSettings] =
     useState<PhotoDiodeSettings>(photoDiodeSettingsSaved);
   const [nextStepSettings, updateNextStepSettings] = useState<NextStepSettings>(
@@ -41,7 +43,7 @@ const SettingsView: FC = () => {
 
   const saveAllSettings = (): void => {
     saveSettings('generalSettings', generalSettings);
-    saveSettings('nBackSettings', nBackSettings);
+    saveSettings('flankerSettings', flankerSettings);
     saveSettings('breakSettings', breakSettings);
     saveSettings('photoDiodeSettings', photoDiodeSettings);
     saveSettings('nextStepSettings', nextStepSettings);
@@ -50,7 +52,7 @@ const SettingsView: FC = () => {
   const disableSave = useMemo(() => {
     if (
       isEqual(generalSettingsSaved, generalSettings) &&
-      isEqual(nBackSettingsSaved, nBackSettings) &&
+      isEqual(flankerSettingsSaved, flankerSettings) &&
       isEqual(breakSettingsSaved, breakSettings) &&
       isEqual(photoDiodeSettingsSaved, photoDiodeSettings) &&
       isEqual(nextStepSettingsSaved, nextStepSettings)
@@ -61,8 +63,8 @@ const SettingsView: FC = () => {
   }, [
     generalSettingsSaved,
     generalSettings,
-    nBackSettingsSaved,
-    nBackSettings,
+    flankerSettingsSaved,
+    flankerSettings,
     breakSettingsSaved,
     breakSettings,
     photoDiodeSettingsSaved,
@@ -78,8 +80,14 @@ const SettingsView: FC = () => {
         generalSettings={generalSettings}
         onChange={updateGeneralSettings}
       />
-      <NBackSettingsView />
-      <BreakSettingsView />
+      <FlankerSettingsView
+        flankerSettings={flankerSettings}
+        onChange={updateFlankerSettings}
+      />
+      <BreakSettingsView
+        breakSettings={breakSettings}
+        onChange={updateBreakSettings}
+      />
       <PhotoDiodeSettingsView
         photoDiodeSettings={photoDiodeSettings}
         onChange={updatePhotoDiodeSettings}

@@ -8,28 +8,27 @@ import TableRow from '@mui/material/TableRow';
 
 export type ResultData = {
   name: string | undefined;
-  nBackLevel?: number;
   accuracy?: number;
   correctCount?: number;
   totalTrials?: number;
   length: number;
   rawDataDownload: () => void;
+  csvDataDownload?: () => void;
   onDelete: () => void;
 };
 
 const ResultsRow: FC<ResultData> = ({
   name,
-  nBackLevel,
   accuracy,
   correctCount,
   totalTrials,
   length,
   rawDataDownload,
+  csvDataDownload,
   onDelete,
 }) => (
   <TableRow>
     <TableCell>{name}</TableCell>
-    <TableCell>{nBackLevel}</TableCell>
     <TableCell>{accuracy?.toFixed(1)}%</TableCell>
     <TableCell>
       {correctCount}/{totalTrials}
@@ -40,9 +39,20 @@ const ResultsRow: FC<ResultData> = ({
         onClick={(): void => {
           rawDataDownload();
         }}
+        title="Download as JSON"
       >
         <FileDownloadIcon />
       </IconButton>
+      {csvDataDownload && (
+        <IconButton
+          onClick={(): void => {
+            csvDataDownload();
+          }}
+          title="Download as CSV"
+        >
+          <FileDownloadIcon />
+        </IconButton>
+      )}
       <IconButton
         onClick={(): void => {
           if (

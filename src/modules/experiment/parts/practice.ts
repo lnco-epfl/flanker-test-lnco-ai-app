@@ -3,16 +3,11 @@ import type { DataCollection, JsPsych } from 'jspsych';
 
 import { AllSettingsType } from '@/modules/context/SettingsContext';
 
-import {
-  ExperimentState,
-  isTargetTrial,
-} from '../jspsych/experiment-state-class';
+import { ExperimentState } from '../jspsych/experiment-state-class';
 import i18n from '../jspsych/i18n';
-import NBackStimulusPlugin from '../trials/nback-stimulus-trial';
+import FlankerStimulusPlugin from '../trials/flanker-stimulus-trial';
 import { practiceFeedbackTrial } from '../trials/practice-feedback-trial';
 import { Timeline } from '../utils/types';
-
-const t = i18n.t.bind(i18n);
 
 /**
  * Build practice trials timeline
@@ -33,33 +28,35 @@ export const buildPractice = (
   state.initializePracticeSequence();
 
   // Get practice settings
-  const { displayDuration, interStimulusInterval, responseKey } =
-    state.getNBackSettings();
+  const {
+    displayDuration,
+    interTrialInterval,
+    responseKey,
+    showFixationCross,
+  } = state.getFlankerSettings();
 
   // Determine valid keyboard responses and mouse setting
-  const validResponses = responseKey === 'mouse' ? 'NO_KEYS' : [' '];
-  const allowMouse = responseKey !== 'space';
+  const validResponses =
+    responseKey === 'mouse' ? 'NO_KEYS' : ['ArrowLeft', 'ArrowRight'];
+  const allowMouse = responseKey !== 'arrows';
 
   // Get the full sequence
-  const sequence = state.getSequence();
+  const trials = state.getTrials();
 
   // Create practice trials
-  for (let i = 0; i < sequence.length; i += 1) {
-    const stimulus = sequence[i];
-    const correctResponse = isTargetTrial(
-      sequence,
-      i,
-      state.getNBackSettings().nLevel,
-    );
+  for (let i = 0; i < trials.length; i += 1) {
+    const trial = trials[i];
 
-    const trial = {
-      type: NBackStimulusPlugin,
-      stimulus,
+    const practiceTrialObj = {
+      type: FlankerStimulusPlugin,
+      stimulus: trial.stimulus,
+      condition: trial.condition,
       display_duration: displayDuration,
-      inter_stimulus_interval: interStimulusInterval,
+      inter_trial_interval: interTrialInterval,
+      show_fixation: showFixationCross,
       valid_responses: validResponses,
       allow_mouse_response: allowMouse,
-      correct_response: correctResponse,
+      correct_response: trial.correctResponse,
       trial_index: i,
       state,
       on_finish: () => {
@@ -70,7 +67,7 @@ export const buildPractice = (
       },
     };
 
-    timeline.push(trial);
+    timeline.push(practiceTrialObj);
   }
 
   // Add feedback screen
@@ -80,9 +77,9 @@ export const buildPractice = (
   timeline.push({
     type: htmlKeyboardResponse,
     stimulus: `
-      <div class="nback-practice-repeat">
-        <h2>${t('PRACTICE.FEEDBACK_TITLE')}</h2>
-        <p>${t('PRACTICE.PRESS_TO_CONTINUE')}</p>
+      <div class="flanker-practice-repeat">
+        <h2>${i18n.t('PRACTICE.CONTINUE_TITLE')}</h2>
+        <p>${i18n.t('PRACTICE.PRESS_TO_CONTINUE')}</p>
       </div>
     `,
     choices: ['r', ' '],

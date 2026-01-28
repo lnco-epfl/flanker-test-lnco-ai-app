@@ -18,6 +18,7 @@ export const getQueryParam = (param: string): string | null => {
 // Initialize i18next
 const language = getQueryParam('lang') || 'en'; // Default to 'en' if not specified
 
+// Initialize synchronously to ensure translations are available immediately
 i18n.init({
   resources: {
     en: {
@@ -32,6 +33,7 @@ i18n.init({
   interpolation: {
     escapeValue: false, // React already does escaping
   },
+  initImmediate: false, // Initialize synchronously
 });
 
 export default i18n;

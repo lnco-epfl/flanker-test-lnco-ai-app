@@ -1,89 +1,42 @@
-// eslint-disable-next-line import/no-cycle
-import i18n from '../jspsych/i18n';
+const arrowSize = 120;
 
-// Stub types for EBDM code compatibility
-export type DelayType = 'short' | 'long';
-export type BoundsType = 'easy' | 'medium' | 'hard';
-export type RewardType = 'low' | 'medium' | 'high';
+export const leftArrowSVG = `
+<svg width="${arrowSize}" height="${arrowSize}" viewBox="0 0 24 24">
+  <!-- shaft -->
+  <line x1="18" y1="12" x2="8" y2="12"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round" />
+  <!-- head -->
+  <path d="M4 12 L8 8 L8 16 Z" fill="currentColor" />
+</svg>
+`;
 
-export const LOADING_BAR_SPEED_NO = 50;
-export const LOADING_BAR_SPEED_YES = 5;
+export const rightArrowSVG = `
+<svg width="${arrowSize}" height="${arrowSize}" viewBox="0 0 24 24">
+  <!-- shaft -->
+  <line x1="4" y1="12" x2="16" y2="12"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round" />
+  <!-- head -->
+  <path d="M20 12 L16 8 L16 16 Z" fill="currentColor" />
+</svg>
+`;
 
-export const AUTO_DECREASE_AMOUNT = 2;
-export const AUTO_DECREASE_RATE = 100;
-export const AUTO_INCREASE_AMOUNT = 10;
-export const MAXIMUM_THERMOMETER_HEIGHT = 100;
-export const EXPECTED_MAXIMUM_PERCENTAGE = 100;
-export const NUM_TAPS_WITHOUT_DELAY = 5;
+export const neutralSVG = `
+<svg width="${arrowSize}" height="${arrowSize}" viewBox="0 0 24 24">
+  <rect x="4" y="11" width="16" height="2" fill="currentColor"/>
+</svg>
+`;
 
-export const DELAY_DEFINITIONS: { [key in DelayType]: [number, number] } = {
-  short: [0, 0],
-  long: [400, 600],
-};
-
-export const BOUNDS_DEFINITIONS: { [key in BoundsType]: [number, number] } = {
-  easy: [5, 23],
-  medium: [41, 59],
-  hard: [77, 95],
-};
-
-export const REWARD_DEFINITIONS: {
-  [key in RewardType]: number;
-} = {
-  low: 1,
-  medium: 10,
-  high: 40,
-};
-
-export const DEFAULT_REWARD_YITTER = 0.5;
-export const DEFAULT_BOUNDS_VARIATION = 3;
-export const TOTAL_REWARD_MONEY = 6;
-export const CURRENCY = 'GBP';
-
-export const NUM_CALIBRATION_WITHOUT_FEEDBACK_TRIALS = 4; // 4 default
-export const NUM_CALIBRATION_WITH_FEEDBACK_TRIALS = 3; // 3 default
-export const NUM_CALIBRATION_TRIALS =
-  NUM_CALIBRATION_WITHOUT_FEEDBACK_TRIALS +
-  NUM_CALIBRATION_WITH_FEEDBACK_TRIALS;
-
-export const NUM_FINAL_CALIBRATION_TRIALS_PART_1 = 3; // 3 default
-export const NUM_FINAL_CALIBRATION_TRIALS_PART_2 = 3; // 3 default
-
-export const MINIMUM_CALIBRATION_MEDIAN = 10;
-export const EXPECTED_MAXIMUM_PERCENTAGE_FOR_CALIBRATION = 50;
-
-export const PERCENTAGE_VALIDATION_TRIALS_SUCCESSFUL = 0.75;
-export const NUM_VALIDATION_TRIALS = 4; // 4 default
-export const NUM_EXTRA_VALIDATION_TRIALS = 3; // 3 default
-
-export const NUM_DEMO_TRIALS = 3; // 3 default
-export const MINIMUM_DEMO_TAPS = 10;
-export const FAILED_MINIMUM_DEMO_TAPS_DURATION = 3000;
-
-export const NUM_TRIALS = 63; // 63 default
-export const TRIAL_DURATION = 7000; // 7000 default
-
-export const GO_DURATION = 500;
-export const SUCCESS_SCREEN_DURATION = 500;
-export const COUNTDOWN_TIME = 3;
-export const PREMATURE_KEY_RELEASE_ERROR_TIME = 1000;
-export const KEY_TAPPED_EARLY_ERROR_TIME = 3000;
-export const KEYBOARD_LAYOUT = '';
-
-export const SIT_COMFORTABLY_MESSAGE = i18n.t('SIT_COMFORTABLY_MESSAGE');
-export const INTRODUCTION_HEADER = i18n.t('INTRODUCTION_HEADER');
-
-export const EXPERIMENT_HAS_ENDED_MESSAGE = i18n.t(
-  'EXPERIMENT_HAS_ENDED_MESSAGE',
-);
-export const CLICK_BUTTON_TO_PROCEED_MESSAGE = i18n.t(
-  'CLICK_BUTTON_TO_PROCEED_MESSAGE',
-);
-export const ENABLE_BUTTON_AFTER_TIME = 15000; // default is 15000 ms
-export const HAND_TUTORIAL_MESSAGE = i18n.t('HAND_TUTORIAL_MESSAGE');
-export const TUTORIAL_HEADER = i18n.t('TUTORIAL_HEADER');
-export const CONTINUE_MESSAGE_TITLE = i18n.t('CONTINUE_MESSAGE_TITLE');
-export const TRIAL_BLOCKS_TITLE = i18n.t('TRIAL_BLOCKS_TITLE');
-export const REWARD_PAGE_TITLE = i18n.t('REWARD_PAGE_TITLE');
-export const REMEMBER_PAGE_TITLE = i18n.t('REMEMBER_PAGE_TITLE');
-export const PROGRESS_BAR_MESSAGE = i18n.t('PROGRESS_BAR_MESSAGE');
+/**
+ * Timing constants for experiment trials (in milliseconds)
+ * These can be adjusted here to change timing across the entire experiment
+ */
+export const TIMING = {
+  FIXATION_DURATION: 500, // Duration to show fixation cross before stimulus
+  LATE_RESPONSE_BUFFER: 0, // Time window after stimulus removal to still accept responses
+  POST_TRIAL_GAP: 500, // Time between end of trial and next trial starts
+  COUNTDOWN_INTERVAL: 1000, // Interval for break countdown timer (1 second)
+} as const;

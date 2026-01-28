@@ -1,124 +1,112 @@
 import {
   AllSettingsType,
   BreakSettingsType,
+  FlankerSettingsType,
   GeneralSettingsType,
-  NBackSettingsType,
   NextStepSettings,
   PhotoDiodeSettings,
 } from '@/modules/context/SettingsContext';
 
+import { leftArrowSVG, neutralSVG, rightArrowSVG } from '../utils/constants';
+
 /**
- * Generates a random N-back sequence with specified parameters
+ * Trial condition types for Flanker task
+ */
+export type FlankerCondition = 'congruent' | 'incongruent' | 'neutral';
+
+/**
+ * Flanker trial definition
+ */
+export interface FlankerTrial {
+  condition: FlankerCondition;
+  correctResponse: 'left' | 'right'; // direction of center arrow
+  stimulus: string; // HTML stimulus
+}
+
+/**
+ * Creates a single Flanker trial with stimulus HTML
+ */
+function createFlankerTrial(
+  condition: FlankerCondition,
+  centerDirection: 'left' | 'right',
+): FlankerTrial {
+  const leftArrow = leftArrowSVG;
+  const rightArrow = rightArrowSVG;
+  const neutralSymbol = neutralSVG;
+  let stimulus = '';
+  let flankerSymbol = '';
+
+  if (condition === 'congruent') {
+    flankerSymbol = centerDirection === 'left' ? leftArrow : rightArrow;
+    stimulus = `${flankerSymbol} ${flankerSymbol} ${
+      centerDirection === 'left' ? leftArrow : rightArrow
+    } ${flankerSymbol} ${flankerSymbol}`;
+  } else if (condition === 'incongruent') {
+    flankerSymbol = centerDirection === 'left' ? rightArrow : leftArrow;
+    stimulus = `${flankerSymbol} ${flankerSymbol} ${
+      centerDirection === 'left' ? leftArrow : rightArrow
+    } ${flankerSymbol} ${flankerSymbol}`;
+  } else {
+    // neutral
+    stimulus = `${neutralSymbol} ${neutralSymbol} ${
+      centerDirection === 'left' ? leftArrow : rightArrow
+    } ${neutralSymbol} ${neutralSymbol}`;
+  }
+
+  return {
+    condition,
+    correctResponse: centerDirection,
+    stimulus,
+  };
+}
+
+/**
+ * Generates a balanced sequence of Flanker trials
  * @param length - Total number of trials
- * @param nLevel - N-back level (1, 2, 3, or 4)
- * @param targetPercentage - Percentage of target trials (default 33%)
- * @returns Array of single-digit numbers
+ * @param congruentPercentage - Percentage of congruent trials
+ * @param incongruentPercentage - Percentage of incongruent trials
+ * @returns Array of FlankerTrial objects
  */
-export function generateNBackSequence(
+export function generateFlankerSequence(
   length: number,
-  nLevel: number,
-  targetPercentage: number = 33,
-): number[] {
-  const sequence: number[] = [];
-  const targetCount = Math.max(
-    1,
-    Math.floor((length * targetPercentage) / 100),
-  ); // Ensure at least 1 target
-  const targetPositions = new Set<number>();
+  congruentPercentage: number = 33,
+  incongruentPercentage: number = 33,
+): FlankerTrial[] {
+  const trials: FlankerTrial[] = [];
 
-  // Ensure at least one target position for this n-level (must be >= nLevel)
-  const minTargetPos = nLevel;
-  const maxTargetPos = length - 1;
+  const congruentCount = Math.round((length * congruentPercentage) / 100);
+  const incongruentCount = Math.round((length * incongruentPercentage) / 100);
+  const neutralCount = length - congruentCount - incongruentCount;
 
-  // First, ensure we have at least one match at a valid position
-  if (minTargetPos <= maxTargetPos) {
-    const firstTargetPos =
-      minTargetPos +
-      Math.floor(Math.random() * (maxTargetPos - minTargetPos + 1));
-    targetPositions.add(firstTargetPos);
-  }
+  const conditions: FlankerCondition[] = [
+    ...Array(congruentCount).fill('congruent'),
+    ...Array(incongruentCount).fill('incongruent'),
+    ...Array(neutralCount).fill('neutral'),
+  ];
 
-  // Select additional random positions for targets if needed
-  while (
-    targetPositions.size < targetCount &&
-    targetPositions.size < length - nLevel
-  ) {
-    const pos = Math.floor(Math.random() * (length - nLevel)) + nLevel;
-    targetPositions.add(pos);
-  }
+  // Shuffle array
+  conditions.sort(() => Math.random() - 0.5);
 
-  // Generate sequence
-  for (let i = 0; i < length; i += 1) {
-    if (targetPositions.has(i)) {
-      // This should be a target - match the n-back position
-      sequence[i] = sequence[i - nLevel];
-    } else {
-      // Non-target - ensure it doesn't match n-back position
-      let num: number;
-      do {
-        num = Math.floor(Math.random() * 10); // 0-9
-      } while (
-        (i >= nLevel && num === sequence[i - nLevel]) || // Avoid n-back match
-        (i >= 1 && num === sequence[i - 1]) // Avoid immediate repeats
-      );
-      sequence[i] = num;
-    }
-  }
+  // Generate trials
+  conditions.forEach((condition) => {
+    const centerDirection = Math.random() < 0.5 ? 'left' : 'right';
+    trials.push(
+      createFlankerTrial(condition, centerDirection as 'left' | 'right'),
+    );
+  });
 
-  return sequence;
-}
-
-/**
- * Parses a custom sequence string into an array of numbers
- * @param sequenceString - Comma-separated numbers
- * @returns Array of numbers or null if invalid
- */
-export function parseCustomSequence(sequenceString: string): number[] | null {
-  if (!sequenceString || sequenceString.trim() === '') {
-    return null;
-  }
-
-  const numbers = sequenceString
-    .split(',')
-    .map((s) => s.trim())
-    .filter((s) => s !== '')
-    .map((s) => parseInt(s, 10));
-
-  // Validate all are single digits
-  // eslint-disable-next-line no-restricted-globals
-  if (numbers.some((n) => isNaN(n) || n < 0 || n > 9)) {
-    return null;
-  }
-
-  return numbers;
-}
-
-/**
- * Determines if a trial should be a target based on n-back logic
- * @param sequence - The full stimulus sequence
- * @param currentIndex - Current trial index
- * @param nLevel - N-back level
- * @returns true if current stimulus matches n-back position
- */
-export function isTargetTrial(
-  sequence: number[],
-  currentIndex: number,
-  nLevel: number,
-): boolean {
-  if (currentIndex < nLevel) {
-    return false; // First N trials can never be targets
-  }
-  return sequence[currentIndex] === sequence[currentIndex - nLevel];
+  return trials;
 }
 
 interface State {
-  sequence: number[];
+  trials: FlankerTrial[];
   currentTrialIndex: number;
   practiceMode: boolean;
-  practiceResponses: boolean[]; // Track correct/incorrect for practice feedback
-  practiceTargetCount: number; // How many target trials (should-respond)
-  practiceHitCount: number; // Responded correctly on target
-  practiceFalsePositiveCount: number; // Responded when no target
+  practiceResponses: Array<{
+    correct: boolean;
+    condition: FlankerCondition;
+    rt: number;
+  }>;
 }
 
 export class ExperimentState {
@@ -126,7 +114,7 @@ export class ExperimentState {
 
   private generalSettings: GeneralSettingsType;
 
-  private nBackSettings: NBackSettingsType;
+  private flankerSettings: FlankerSettingsType;
 
   private breakSettings: BreakSettingsType;
 
@@ -136,20 +124,17 @@ export class ExperimentState {
 
   constructor(settings: AllSettingsType) {
     this.generalSettings = settings.generalSettings;
-    this.nBackSettings = settings.nBackSettings;
+    this.flankerSettings = settings.flankerSettings;
     this.breakSettings = settings.breakSettings;
     this.photoDiodeSettings = settings.photoDiodeSettings;
     this.nextStepSettings = settings.nextStepSettings;
 
     // Initialize with empty state - will be set when experiment starts
     this.state = {
-      sequence: [],
+      trials: [],
       currentTrialIndex: 0,
       practiceMode: false,
       practiceResponses: [],
-      practiceTargetCount: 0,
-      practiceHitCount: 0,
-      practiceFalsePositiveCount: 0,
     };
   }
 
@@ -158,8 +143,8 @@ export class ExperimentState {
     return this.generalSettings;
   }
 
-  getNBackSettings(): NBackSettingsType {
-    return this.nBackSettings;
+  getFlankerSettings(): FlankerSettingsType {
+    return this.flankerSettings;
   }
 
   getBreakSettings(): BreakSettingsType {
@@ -177,7 +162,7 @@ export class ExperimentState {
   getAllSettings(): AllSettingsType {
     return {
       generalSettings: this.generalSettings,
-      nBackSettings: this.nBackSettings,
+      flankerSettings: this.flankerSettings,
       breakSettings: this.breakSettings,
       photoDiodeSettings: this.photoDiodeSettings,
       nextStepSettings: this.nextStepSettings,
@@ -186,48 +171,22 @@ export class ExperimentState {
 
   // Sequence management
   initializePracticeSequence(): void {
-    const customSeq = parseCustomSequence(
-      this.nBackSettings.customPracticeSequence,
+    this.state.trials = generateFlankerSequence(
+      this.flankerSettings.numberOfPracticeTrials,
+      this.flankerSettings.congruentPercentage,
+      this.flankerSettings.incongruentPercentage,
     );
-    if (
-      customSeq &&
-      customSeq.length >= this.nBackSettings.numberOfPracticeTrials
-    ) {
-      // Use first N trials from custom practice sequence
-      this.state.sequence = customSeq.slice(
-        0,
-        this.nBackSettings.numberOfPracticeTrials,
-      );
-    } else {
-      // Generate random practice sequence
-      this.state.sequence = generateNBackSequence(
-        this.nBackSettings.numberOfPracticeTrials,
-        this.nBackSettings.nLevel,
-      );
-    }
     this.state.currentTrialIndex = 0;
     this.state.practiceMode = true;
     this.state.practiceResponses = [];
-    this.state.practiceTargetCount = 0;
-    this.state.practiceHitCount = 0;
-    this.state.practiceFalsePositiveCount = 0;
   }
 
   initializeMainSequence(): void {
-    const customSeq = parseCustomSequence(this.nBackSettings.customSequence);
-    if (customSeq && customSeq.length >= this.nBackSettings.numberOfTrials) {
-      // Use custom sequence
-      this.state.sequence = customSeq.slice(
-        0,
-        this.nBackSettings.numberOfTrials,
-      );
-    } else {
-      // Generate random sequence
-      this.state.sequence = generateNBackSequence(
-        this.nBackSettings.numberOfTrials,
-        this.nBackSettings.nLevel,
-      );
-    }
+    this.state.trials = generateFlankerSequence(
+      this.flankerSettings.numberOfTrials,
+      this.flankerSettings.congruentPercentage,
+      this.flankerSettings.incongruentPercentage,
+    );
     this.state.currentTrialIndex = 0;
   }
 
@@ -236,12 +195,12 @@ export class ExperimentState {
     this.state.currentTrialIndex = 0;
   }
 
-  getSequence(): number[] {
-    return this.state.sequence;
+  getTrials(): FlankerTrial[] {
+    return this.state.trials;
   }
 
-  getCurrentStimulus(): number {
-    return this.state.sequence[this.state.currentTrialIndex];
+  getCurrentTrial(): FlankerTrial {
+    return this.state.trials[this.state.currentTrialIndex];
   }
 
   getCurrentTrialIndex(): number {
@@ -252,14 +211,6 @@ export class ExperimentState {
     this.state.currentTrialIndex += 1;
   }
 
-  isCurrentTrialTarget(): boolean {
-    return isTargetTrial(
-      this.state.sequence,
-      this.state.currentTrialIndex,
-      this.nBackSettings.nLevel,
-    );
-  }
-
   // Practice management
   isPracticeMode(): boolean {
     return this.state.practiceMode;
@@ -267,65 +218,56 @@ export class ExperimentState {
 
   recordPracticeResponse(
     correct: boolean,
-    responded: boolean,
-    shouldRespond: boolean,
+    condition: FlankerCondition,
+    rt: number,
   ): void {
     if (!this.state.practiceMode) {
       return;
     }
 
-    this.state.practiceResponses.push(correct);
-
-    if (shouldRespond) {
-      this.state.practiceTargetCount += 1;
-      if (responded) {
-        this.state.practiceHitCount += 1;
-      }
-    } else if (responded) {
-      this.state.practiceFalsePositiveCount += 1;
-    }
+    this.state.practiceResponses.push({ correct, condition, rt });
   }
 
   getPracticeAccuracy(): number {
     if (this.state.practiceResponses.length === 0) {
       return 0;
     }
-    const correct = this.state.practiceResponses.filter((r) => r).length;
+    const correct = this.state.practiceResponses.filter(
+      (r) => r.correct,
+    ).length;
     return (correct / this.state.practiceResponses.length) * 100;
   }
 
   getPracticeCorrectCount(): number {
-    return this.state.practiceResponses.filter((r) => r).length;
+    return this.state.practiceResponses.filter((r) => r.correct).length;
   }
 
   getPracticeTotalCount(): number {
     return this.state.practiceResponses.length;
   }
 
-  getPracticeHitCount(): number {
-    return this.state.practiceHitCount;
-  }
-
-  getPracticeTargetCount(): number {
-    return this.state.practiceTargetCount;
-  }
-
-  getPracticeFalsePositiveCount(): number {
-    return this.state.practiceFalsePositiveCount;
+  getPracticeAccuracyByCondition(condition: FlankerCondition): {
+    correct: number;
+    total: number;
+    accuracy: number;
+  } {
+    const responses = this.state.practiceResponses.filter(
+      (r) => r.condition === condition,
+    );
+    if (responses.length === 0) {
+      return { correct: 0, total: 0, accuracy: 0 };
+    }
+    const correct = responses.filter((r) => r.correct).length;
+    return {
+      correct,
+      total: responses.length,
+      accuracy: (correct / responses.length) * 100,
+    };
   }
 
   // Break management
   shouldShowBreak(): boolean {
-    if (!this.breakSettings.enableBreaks || this.state.practiceMode) {
-      return false;
-    }
-
-    const trialsSinceStart = this.state.currentTrialIndex;
-    return (
-      trialsSinceStart > 0 &&
-      trialsSinceStart % this.breakSettings.breakFrequency === 0 &&
-      trialsSinceStart < this.state.sequence.length
-    );
+    return this.breakSettings.enableBreaks;
   }
 
   getBreakDuration(): number {
@@ -334,14 +276,14 @@ export class ExperimentState {
 
   // Check if experiment is complete
   isComplete(): boolean {
-    return this.state.currentTrialIndex >= this.state.sequence.length;
+    return this.state.currentTrialIndex >= this.state.trials.length;
   }
 
   getTotalTrials(): number {
-    return this.state.sequence.length;
+    return this.state.trials.length;
   }
 
   getRemainingTrials(): number {
-    return this.state.sequence.length - this.state.currentTrialIndex;
+    return this.state.trials.length - this.state.currentTrialIndex;
   }
 }

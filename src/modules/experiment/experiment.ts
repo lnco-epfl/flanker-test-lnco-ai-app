@@ -1,6 +1,6 @@
 /**
- * @title N-Back Working Memory Task
- * @description This experiment implements an N-back working memory task with configurable settings.
+ * @title Eriksen Flanker Task
+ * @description This experiment implements an Eriksen Flanker task with configurable settings.
  * @version 1.0.0
  *
  * @assets assets/
@@ -19,7 +19,6 @@ import { buildIntroduction } from './parts/introduction';
 import { buildPractice } from './parts/practice';
 import { buildMainTask } from './parts/task-core';
 import './styles/main.scss';
-import { PROGRESS_BAR_MESSAGE } from './utils/constants';
 import { Timeline, Trial } from './utils/types';
 import { resolveLink } from './utils/utils';
 
@@ -39,7 +38,7 @@ const getEndPage = ({
 
 /**
  * @function run
- * @description Main function to run the N-back experiment
+ * @description Main function to run the Flanker task experiment
  * @param {Object} config - Configuration object for the experiment
  */
 export async function run({
@@ -165,7 +164,7 @@ export async function run({
   const jsPsych = initJsPsych({
     show_progress_bar: true,
     auto_update_progress_bar: false,
-    progress_bar_message: PROGRESS_BAR_MESSAGE,
+    progress_bar_message: '',
     display_element: 'jspsych-display-element',
   });
 
