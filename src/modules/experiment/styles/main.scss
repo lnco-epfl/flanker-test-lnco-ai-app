@@ -11,6 +11,10 @@ body {
   height: 100%;
 }
 
+#jspsych-display-element {
+  --flanker-calibration-scale: 1;
+}
+
 @media (display-mode: fullscreen) {
   .player-view {
     height: 100%;
@@ -52,7 +56,7 @@ body {
 }
 
 .jspsych-display-element {
-  background-color: #000000;
+  background-color: #ffffff;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -79,17 +83,17 @@ body {
   align-items: center;
   height: 100%;
   width: 100%;
-  overflow-y: hidden;
+  overflow-y: auto;
   overflow-x: hidden;
   font-size: calc(var(--font-scale) * 1rem);
   gap: 5px;
-  color: #fff;
+  color: #000000;
 }
 
 #jspsych-progressbar-container {
-  color: #fff;
-  border-bottom: 1px solid #444;
-  background-color: #141414;
+  color: #000000;
+  border-bottom: 1px solid #cccccc;
+  background-color: #f5f5f5;
   margin-bottom: 1em;
   text-align: center;
   padding: 8px 0px;
@@ -110,7 +114,7 @@ body {
 }
 
 #jspsych-progressbar-outer {
-  background-color: #a2a2a2;
+  background-color: #e0e0e0;
   width: 50%;
   height: calc(var(--font-scale) * 20px);
   display: inline-block;
@@ -119,14 +123,14 @@ body {
 }
 
 #jspsych-progressbar-inner {
-  background-color: #4a4a4a;
+  background-color: #333333;
   width: 0%;
   height: 100%;
 }
 
 .jspsych-btn {
-  background-color: #000;
-  color: white;
+  background-color: #333333;
+  color: #ffffff;
   border: none;
   padding: 6px 16px;
   font-size: calc(var(--font-scale) * 1rem);
@@ -188,13 +192,13 @@ body {
 
 /* Flanker task styling */
 .flanker-trial {
-  background-color: #000000;
+  background-color: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  color: #fff;
+  color: #000000;
 }
 
 .flanker-stimulus-container {
@@ -205,12 +209,12 @@ body {
 }
 
 .flanker-stimulus {
-  font-size: 10rem;
+  font-size: calc(10rem * var(--flanker-calibration-scale, 1));
   font-weight: bold;
-  letter-spacing: 30px;
+  letter-spacing: calc(30px * var(--flanker-calibration-scale, 1));
   user-select: none;
   font-family: 'Courier New', Courier, monospace;
-  color: #fff;
+  color: #000000;
   line-height: 1;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -221,29 +225,29 @@ body {
 
 /* Responsive flanker stimulus sizes */
 .font-small .flanker-stimulus {
-  font-size: 6rem;
-  letter-spacing: 15px;
+  font-size: calc(6rem * var(--flanker-calibration-scale, 1));
+  letter-spacing: calc(15px * var(--flanker-calibration-scale, 1));
 }
 
 .font-normal .flanker-stimulus {
-  font-size: 10rem;
-  letter-spacing: 30px;
+  font-size: calc(10rem * var(--flanker-calibration-scale, 1));
+  letter-spacing: calc(30px * var(--flanker-calibration-scale, 1));
 }
 
 .font-large .flanker-stimulus {
-  font-size: 12rem;
-  letter-spacing: 35px;
+  font-size: calc(12rem * var(--flanker-calibration-scale, 1));
+  letter-spacing: calc(35px * var(--flanker-calibration-scale, 1));
 }
 
 .font-extra-large .flanker-stimulus {
-  font-size: 14rem;
-  letter-spacing: 40px;
+  font-size: calc(14rem * var(--flanker-calibration-scale, 1));
+  letter-spacing: calc(40px * var(--flanker-calibration-scale, 1));
 }
 
 /* Fixation cross */
 .fixation-cross {
   font-size: 5rem;
-  color: #fff;
+  color: #000000;
   margin: 40px 0;
   user-select: none;
   font-family: Arial, sans-serif;
@@ -274,8 +278,8 @@ body {
   margin: 0 auto;
   padding: calc(var(--font-scale, 1) * 2rem);
   text-align: center;
-  color: #fff;
-  background-color: #000000;
+  color: #000000;
+  background-color: #ffffff;
 }
 
 .flanker-intro h1,
@@ -285,14 +289,14 @@ body {
 .flanker-complete h2 {
   margin-bottom: calc(var(--font-scale, 1) * 1.5rem);
   font-size: calc(var(--font-scale, 1) * 2.2rem);
-  color: #fff;
+  color: #000000;
 }
 
 .flanker-instructions h3 {
   font-size: calc(var(--font-scale, 1) * 1.3rem);
   margin-top: calc(var(--font-scale, 1) * 1.5rem);
   margin-bottom: calc(var(--font-scale, 1) * 1rem);
-  color: #ccc;
+  color: #555555;
 }
 
 .flanker-instructions p,
@@ -303,18 +307,18 @@ body {
   font-size: calc(var(--font-scale, 1) * 1.2rem);
   line-height: 1.8;
   margin-bottom: calc(var(--font-scale, 1) * 1rem);
-  color: #fff;
+  color: #000000;
 }
 
 .flanker-instructions strong,
 .flanker-feedback strong {
-  color: #00d4ff;
+  color: #0066cc;
   font-weight: 700;
 }
 
 .flanker-feedback .feedback-stats {
-  background-color: #111;
-  border: 2px solid #333;
+  background-color: #f5f5f5;
+  border: 2px solid #cccccc;
   border-radius: 8px;
   padding: calc(var(--font-scale, 1) * 2rem);
   margin: calc(var(--font-scale, 1) * 2rem) 0;
@@ -329,14 +333,14 @@ body {
 
 .flanker-feedback h3 {
   font-size: calc(var(--font-scale, 1) * 1.2rem);
-  color: #00d4ff;
+  color: #0066cc;
   margin-top: calc(var(--font-scale, 1) * 1.5rem);
   margin-bottom: calc(var(--font-scale, 1) * 1rem);
 }
 
 .flanker-feedback hr {
   border: none;
-  border-top: 1px solid #444;
+  border-top: 1px solid #cccccc;
   margin: calc(var(--font-scale, 1) * 1.5rem) 0;
 }
 
@@ -350,4 +354,29 @@ body {
 .important {
   font-weight: bold;
   color: #ff9800;
+}
+
+/* Comprehension check — stacked buttons, white/black style */
+.flanker-comprehension .jspsych-btn-group-flex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--font-scale, 1) * 0.6rem);
+}
+
+.flanker-comprehension .jspsych-btn {
+  background-color: #ffffff;
+  color: #000000;
+  border: 2px solid #000000;
+  box-shadow: none;
+  text-transform: none;
+  width: calc(var(--font-scale, 1) * 300px);
+  max-width: 80%;
+}
+
+.flanker-instruction-img {
+  width: calc(var(--font-scale, 1) * 400px);
+  max-width: 100%;
+  display: block;
+  margin: 0.5rem auto 1rem;
 }

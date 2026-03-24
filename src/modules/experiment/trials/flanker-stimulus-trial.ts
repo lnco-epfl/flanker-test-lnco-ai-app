@@ -70,8 +70,10 @@ class FlankerStimulusPlugin implements JsPsychPlugin<Info> {
   trial(displayElement: HTMLElement, trial: TrialType<Info>): void {
     const state = trial.state as ExperimentState;
     const { fontSize } = state.getGeneralSettings();
+    const calibratedFontSize =
+      displayElement.getAttribute('data-font-size') ?? fontSize;
     const element = displayElement;
-    element.className = `flanker-trial font-${fontSize}`;
+    element.className = `flanker-trial font-${calibratedFontSize}`;
 
     // Show fixation cross
     if (trial.show_fixation) {
