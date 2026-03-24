@@ -7,6 +7,7 @@ import { useLocalContext } from '@graasp/apps-query-client';
 import { DataCollection, JsPsych } from 'jspsych';
 
 import { hooks } from '@/config/queryClient';
+import { parseScreenCalibration } from '@/utils/screenCalibration';
 
 import { TrialData } from '../config/appResults';
 import useExperimentResults from '../context/ExperimentContext';
@@ -15,14 +16,24 @@ import { run } from '../experiment/experiment';
 
 export const ExperimentLoader: FC = () => {
   const settings = useSettings();
-  const { memberId } = useLocalContext();
+  const localContext = useLocalContext();
   const { data: appContextData } = hooks.useAppContext();
+  const screenCalibration = parseScreenCalibration(localContext);
+  const localActorId =
+    (localContext as { accountId?: string }).accountId ??
+    (localContext as { memberId?: string }).memberId;
   let participantName = '';
 
-  if (appContextData?.members) {
+  const contextActors = [
+    ...((appContextData as { accounts?: { id: string; name?: string }[] })
+      ?.accounts ?? []),
+    ...((appContextData as { members?: { id: string; name?: string }[] })
+      ?.members ?? []),
+  ];
+
+  if (localActorId) {
     participantName =
-      appContextData.members.find((member) => member.id === memberId)?.name ??
-      '';
+      contextActors.find((actor) => actor.id === localActorId)?.name ?? '';
   }
   const jsPsychRef = useRef<null | Promise<JsPsych>>(null);
 
@@ -74,6 +85,7 @@ export const ExperimentLoader: FC = () => {
             settings,
             results: experimentResultsAppData,
             participantName,
+            screenCalibration,
           },
           // eslint-disable-next-line @typescript-eslint/no-shadow
           updateData: (data, settings) => updateData(data, settings),
@@ -95,6 +107,7 @@ export const ExperimentLoader: FC = () => {
             settings,
             results: experimentResultsAppData,
             participantName,
+            screenCalibration,
           },
           // eslint-disable-next-line @typescript-eslint/no-shadow
           updateData: (data, settings) => updateData(data, settings),
