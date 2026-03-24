@@ -20,45 +20,62 @@ const experimentBeginTrial = (): Trial => ({
 });
 
 /**
- * Detailed task instructions
+ * Detailed task instructions — single comprehensive screen matching neuropsychologist spec
  */
 const taskInstructions = (): Trial[] => [
+  // Page 1: Overview and response keys
   {
     type: FullscreenPlugin,
     choices: [i18n.t('FLANKER.CONTINUE_BUTTON')],
     message: `
-      <div class="flanker-ready">
+      <div class="flanker-instructions">
         <h2>${i18n.t('FLANKER.INSTRUCTIONS_TITLE')}</h2>
         <p>${i18n.t('FLANKER.INSTRUCTIONS_OVERVIEW')}</p>
-        <p>${i18n.t('FLANKER.INSTRUCTIONS_CENTER_FOCUS')}</p>
+        <p>${i18n.t('FLANKER.RESPONSE_LEFT')}</p>
+        <p>${i18n.t('FLANKER.RESPONSE_RIGHT')}</p>
+        <img src="assets/images/arrow-keys.png" alt="Arrow keys" class="flanker-instruction-img" />
       </div>
     `,
   },
+  // Page 2: Examples
   {
     type: FullscreenPlugin,
     choices: [i18n.t('FLANKER.CONTINUE_BUTTON')],
     message: `
-      <div class="flanker-ready">
-        <h2>${i18n.t('FLANKER.RESPONSE_INSTRUCTIONS_TITLE')}</h2>
-        <p>${i18n.t('FLANKER.RESPONSE_LEFT')}</p>
-        <p>${i18n.t('FLANKER.RESPONSE_RIGHT')}</p>
-        <p class="important">${i18n.t('FLANKER.IGNORE_FLANKERS')}</p>
-        <p class="important">${i18n.t('FLANKER.SPEED_ACCURACY_BALANCE')}</p>
+      <div class="flanker-instructions">
+        <h3>${i18n.t('FLANKER.EXAMPLES_TITLE')}</h3>
+        <p>${i18n.t('FLANKER.EXAMPLE_CONGRUENT')}</p>
+        <img src="assets/images/flanker-congruent.png" alt="Congruent flanker example" class="flanker-instruction-img" />
+        <p>${i18n.t('FLANKER.EXAMPLE_INCONGRUENT')}</p>
+        <img src="assets/images/flanker-incongruent.png" alt="Incongruent flanker example" class="flanker-instruction-img" />
+        <p>${i18n.t('FLANKER.EXAMPLE_NEUTRAL')}</p>
+        <img src="assets/images/flanker-neutral.png" alt="Neutral flanker example" class="flanker-instruction-img" />
       </div>
     `,
   },
+  // Page 3: Reminders
   {
     type: FullscreenPlugin,
     choices: [i18n.t('FLANKER.START_PRACTICE_BUTTON')],
     message: `
-      <div class="flanker-ready">
-        <h2>${i18n.t('FLANKER.PRACTICE_INTRO_TITLE')}</h2>
-        <p>${i18n.t('FLANKER.PRACTICE_INTRO_MESSAGE')}</p>
-        <p>${i18n.t('FLANKER.READY_MESSAGE')}</p>
+      <div class="flanker-instructions">
+        <p class="important">${i18n.t('FLANKER.REMEMBER_NOTE')}</p>
+        <p>${i18n.t('FLANKER.DURATION_NOTE')}</p>
+        <p>${i18n.t('FLANKER.FIXATION_NOTE')}</p>
+        <p>${i18n.t('FLANKER.ACCURACY_NOTE')}</p>
       </div>
     `,
   },
 ];
+
+/** Welcome / fullscreen-entry screen — always shown once, outside any retry loop */
+export const buildWelcomeScreen = (): Trial[] => [experimentBeginTrial()];
+
+/** Detailed instruction pages — shown inside the retry loop when practice is enabled */
+export const buildInstructionPages = (state: ExperimentState): Timeline => {
+  if (state.getGeneralSettings().skipInstructions) return [];
+  return taskInstructions();
+};
 
 /**
  * Build introduction timeline

@@ -11,11 +11,16 @@ import PreloadPlugin from '@jspsych/plugin-preload';
 import { Marked } from '@ts-stack/markdown';
 import { DataCollection, JsPsych, initJsPsych } from 'jspsych';
 
+import { ScreenCalibration } from '@/utils/screenCalibration';
+
 import { ExperimentResult } from '../config/appResults';
 import { AllSettingsType, NextStepSettings } from '../context/SettingsContext';
 import { ExperimentState } from './jspsych/experiment-state-class';
 import './jspsych/i18n';
-import { buildIntroduction } from './parts/introduction';
+import {
+  buildInstructionPages,
+  buildWelcomeScreen,
+} from './parts/introduction';
 import { buildPractice } from './parts/practice';
 import { buildMainTask } from './parts/task-core';
 import './styles/main.scss';
@@ -51,11 +56,15 @@ export async function run({
     settings: AllSettingsType;
     results: ExperimentResult;
     participantName: string;
+    screenCalibration?: ScreenCalibration;
   };
   updateData: (data: DataCollection, settings: AllSettingsType) => void;
 }): Promise<JsPsych> {
   // Initialize experiment state
   const state = new ExperimentState(input.settings);
+  const appliedFontSize =
+    input.screenCalibration?.fontSize ?? state.getGeneralSettings().fontSize;
+  const appliedStimulusScale = input.screenCalibration?.scale ?? 1;
 
   // Setup photo-diode if enabled
   if (state.getPhotoDiodeSettings().usePhotoDiode !== 'off') {
@@ -80,14 +89,15 @@ export async function run({
   }
 
   // Apply font size setting
-  if (state.getGeneralSettings().fontSize) {
+  if (appliedFontSize) {
     const jspsychDisplayElement = document.getElementById(
       'jspsych-display-element',
     );
     if (jspsychDisplayElement) {
-      jspsychDisplayElement.setAttribute(
-        'data-font-size',
-        state.getGeneralSettings().fontSize,
+      jspsychDisplayElement.setAttribute('data-font-size', appliedFontSize);
+      jspsychDisplayElement.style.setProperty(
+        '--flanker-calibration-scale',
+        String(appliedStimulusScale),
       );
     }
   }
@@ -138,10 +148,10 @@ export async function run({
       const dropdown = document.createElement('select');
       dropdown.className = 'custom-dropdown';
       dropdown.innerHTML = `
-          <option value="small" ${state.getGeneralSettings().fontSize === 'small' ? 'selected' : ''}>Small</option>
-          <option value="normal" ${state.getGeneralSettings().fontSize === 'normal' ? 'selected' : ''}>Normal</option>
-          <option value="large" ${state.getGeneralSettings().fontSize === 'large' ? 'selected' : ''}>Large</option>
-          <option value="extra-large" ${state.getGeneralSettings().fontSize === 'extra-large' ? 'selected' : ''}>Extra Large</option>
+          <option value="small" ${appliedFontSize === 'small' ? 'selected' : ''}>Small</option>
+          <option value="normal" ${appliedFontSize === 'normal' ? 'selected' : ''}>Normal</option>
+          <option value="large" ${appliedFontSize === 'large' ? 'selected' : ''}>Large</option>
+          <option value="extra-large" ${appliedFontSize === 'extra-large' ? 'selected' : ''}>Extra Large</option>
         `;
       const fontSizeTitle = document.createElement('span');
       fontSizeTitle.innerHTML = 'Font Size:';
@@ -190,21 +200,30 @@ export async function run({
     },
   });
 
-  // Introduction
+  // Welcome screen — always shown once, outside any retry loop
   timeline.push({
-    timeline: buildIntroduction(state),
+    timeline: buildWelcomeScreen(),
     on_timeline_start() {
       if (jsPsych.progressBar) jsPsych.progressBar.progress = 0.0;
     },
   });
 
-  // Practice
-  if (!state.getGeneralSettings().skipPractice) {
+  // Instruction pages + Practice
+  // When practice is enabled, instruction pages are the prologue of the retry
+  // loop so participants see instructions again on retry (but not the welcome).
+  if (state.getGeneralSettings().skipPractice) {
+    const instrPages = buildInstructionPages(state);
+    if (instrPages.length > 0) {
+      timeline.push({ timeline: instrPages });
+    }
+  } else {
     timeline.push({
-      timeline: buildPractice(state, updateDataWithSettings, jsPsych),
-      on_timeline_start() {
-        if (jsPsych.progressBar) jsPsych.progressBar.progress = 0.2;
-      },
+      timeline: buildPractice(
+        state,
+        updateDataWithSettings,
+        jsPsych,
+        buildInstructionPages(state),
+      ),
     });
   }
 
