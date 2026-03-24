@@ -223,25 +223,11 @@ body {
   vertical-align: middle;
 }
 
-/* Responsive flanker stimulus sizes */
-.font-small .flanker-stimulus {
-  font-size: calc(6rem * var(--flanker-calibration-scale, 1));
-  letter-spacing: calc(15px * var(--flanker-calibration-scale, 1));
-}
-
-.font-normal .flanker-stimulus {
-  font-size: calc(10rem * var(--flanker-calibration-scale, 1));
-  letter-spacing: calc(30px * var(--flanker-calibration-scale, 1));
-}
-
-.font-large .flanker-stimulus {
-  font-size: calc(12rem * var(--flanker-calibration-scale, 1));
-  letter-spacing: calc(35px * var(--flanker-calibration-scale, 1));
-}
-
-.font-extra-large .flanker-stimulus {
-  font-size: calc(14rem * var(--flanker-calibration-scale, 1));
-  letter-spacing: calc(40px * var(--flanker-calibration-scale, 1));
+/* SVG stimulus sizing — scales only with calibration scale */
+.flanker-stimulus svg {
+  width: calc(120px * var(--flanker-calibration-scale, 1));
+  height: calc(120px * var(--flanker-calibration-scale, 1));
+  flex-shrink: 0;
 }
 
 /* Fixation cross */
