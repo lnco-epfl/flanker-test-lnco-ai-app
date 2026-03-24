@@ -1,4 +1,4 @@
-import htmlKeyboardResponse from '@jspsych/plugin-html-keyboard-response';
+import htmlButtonResponse from '@jspsych/plugin-html-button-response';
 import type { DataCollection, JsPsych } from 'jspsych';
 
 import { AllSettingsType } from '@/modules/context/SettingsContext';
@@ -16,6 +16,7 @@ export const buildPractice = (
   state: ExperimentState,
   updateData?: (data: DataCollection, settings: AllSettingsType) => void,
   jsPsych?: JsPsych,
+  prologueTimeline: Timeline = [],
 ): Timeline => {
   const timeline: Timeline = [];
 
@@ -70,40 +71,83 @@ export const buildPractice = (
     timeline.push(practiceTrialObj);
   }
 
-  // Add feedback screen
+  // Add practice feedback screen
   timeline.push(practiceFeedbackTrial(state));
 
-  // Option to repeat practice
+  // Training complete screen
   timeline.push({
-    type: htmlKeyboardResponse,
+    type: htmlButtonResponse,
     stimulus: `
-      <div class="flanker-practice-repeat">
-        <h2>${i18n.t('PRACTICE.CONTINUE_TITLE')}</h2>
-        <p>${i18n.t('PRACTICE.PRESS_TO_CONTINUE')}</p>
+      <div class="flanker-feedback">
+        <h2>${i18n.t('PRACTICE.COMPLETE_TITLE')}</h2>
+        <p>${i18n.t('PRACTICE.COMPLETE_MESSAGE')}</p>
+        <p class="important">${i18n.t('PRACTICE.COMPLETE_REMEMBER')}</p>
       </div>
     `,
-    choices: ['r', ' '],
-    on_finish: (data: unknown) => {
-      // If 'r' was pressed, restart practice
-      const d = data as Record<string, unknown>;
-      if (d.response === 'r') {
-        d.repeat_practice = true;
-      }
-    },
+    choices: [i18n.t('PRACTICE.CONTINUE_BUTTON')],
   });
 
-  // Conditional repetition
+  // Comprehension check — correct answer is button index 0 ("The center arrow")
+  timeline.push({
+    type: htmlButtonResponse,
+    stimulus: `
+      <div class="flanker-feedback">
+        <p class="important">${i18n.t('PRACTICE.COMPREHENSION_QUESTION')}</p>
+      </div>
+    `,
+    choices: [
+      i18n.t('PRACTICE.COMPREHENSION_OPTION_CENTER'),
+      i18n.t('PRACTICE.COMPREHENSION_OPTION_SIDES'),
+      i18n.t('PRACTICE.COMPREHENSION_OPTION_ALL'),
+    ],
+    button_layout: 'flex',
+    data: { trial_type: 'comprehension_check' },
+    css_classes: ['flanker-comprehension'],
+  });
+
+  let practiceRepeatCount = 0;
+
+  // Repeat if any practice trial was wrong OR comprehension check is wrong.
+  // Maximum 1 retry — always proceed after the second attempt regardless.
   const practiceLoop = {
-    timeline,
-    loop_function: (data: unknown) => {
-      // Check the last trial for repeat_practice flag
-      const d = data as Record<string, unknown> & { values: () => unknown[] };
-      const lastTrial = d.values().slice(-1)[0] as
-        | Record<string, unknown>
-        | undefined;
-      return lastTrial?.repeat_practice === true;
+    timeline: [...prologueTimeline, ...timeline],
+    loop_function: (data: DataCollection) => {
+      if (practiceRepeatCount >= 1) return false;
+
+      type TrialRecord = Record<string, unknown>;
+      const practiceTrials = data
+        .filter({ practice: true })
+        .values() as TrialRecord[];
+      const hadMistake = practiceTrials.some((t) => t.correct === false);
+
+      const comprehensionTrials = data
+        .filter({ trial_type: 'comprehension_check' })
+        .values() as TrialRecord[];
+      const lastComprehension =
+        comprehensionTrials[comprehensionTrials.length - 1];
+      const comprehensionWrong = lastComprehension?.response !== 0;
+
+      if (hadMistake || comprehensionWrong) {
+        practiceRepeatCount += 1;
+        state.initializePracticeSequence();
+        return true;
+      }
+      return false;
     },
   };
 
-  return [practiceLoop];
+  // Ready screen — always shown after the loop regardless of comprehension result
+  return [
+    practiceLoop,
+    {
+      type: htmlButtonResponse,
+      stimulus: `
+        <div class="flanker-ready">
+          <h2>${i18n.t('PRACTICE.READY_TITLE')}</h2>
+          <p>${i18n.t('PRACTICE.READY_MESSAGE')}</p>
+        </div>
+      `,
+      choices: [i18n.t('FLANKER.CONTINUE_BUTTON')],
+    },
+  ];
 };
