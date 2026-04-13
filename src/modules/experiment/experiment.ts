@@ -16,7 +16,7 @@ import { ScreenCalibration } from '@/utils/screenCalibration';
 import { ExperimentResult } from '../config/appResults';
 import { AllSettingsType, NextStepSettings } from '../context/SettingsContext';
 import { ExperimentState } from './jspsych/experiment-state-class';
-import './jspsych/i18n';
+import i18n from './jspsych/i18n';
 import {
   buildInstructionPages,
   buildWelcomeScreen,
@@ -60,6 +60,11 @@ export async function run({
   };
   updateData: (data: DataCollection, settings: AllSettingsType) => void;
 }): Promise<JsPsych> {
+  // Apply language setting
+  await i18n.changeLanguage(
+    input.settings.generalSettings.language === 'en' ? 'en' : 'fr',
+  );
+
   // Initialize experiment state
   const state = new ExperimentState(input.settings);
   const appliedFontSize =

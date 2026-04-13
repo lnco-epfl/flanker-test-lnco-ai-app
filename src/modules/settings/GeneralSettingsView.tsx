@@ -78,6 +78,23 @@ const GeneralSettingsView: FC<GeneralSettingsViewProps> = ({
       }}
       checked={generalSettings.skipPractice}
     />
+
+    <Stack spacing={0}>
+      <Typography variant="body1">Experiment language</Typography>
+    </Stack>
+    <RadioGroup
+      row
+      value={generalSettings.language}
+      onChange={(e) =>
+        onChange({
+          ...generalSettings,
+          language: e.target.value as 'en' | 'fr',
+        })
+      }
+    >
+      <FormControlLabel value="en" control={<Radio />} label="English" />
+      <FormControlLabel value="fr" control={<Radio />} label="Français" />
+    </RadioGroup>
   </Stack>
 );
 
