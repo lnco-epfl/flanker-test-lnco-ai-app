@@ -7,6 +7,7 @@ export type GeneralSettingsType = {
   fontSize: 'small' | 'normal' | 'large' | 'extra-large';
   skipInstructions: boolean;
   skipPractice: boolean;
+  language: 'en' | 'fr';
 };
 
 export type FlankerSettingsType = {
@@ -59,6 +60,7 @@ const defaultSettingsValues: AllSettingsType = {
     fontSize: 'normal',
     skipInstructions: false,
     skipPractice: false,
+    language: 'en',
   },
   flankerSettings: {
     numberOfTrials: 60,
@@ -149,10 +151,6 @@ export const SettingsProvider: FC<Prop> = ({ children }) => {
     }
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
   const getContextValue = (): SettingsContextType => {
     if (isSuccess) {
       const allSettings: AllSettingsType = ALL_SETTING_NAMES.reduce(
@@ -178,6 +176,10 @@ export const SettingsProvider: FC<Prop> = ({ children }) => {
   };
 
   const contextValue = getContextValue();
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <SettingsContext.Provider value={contextValue}>
