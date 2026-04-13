@@ -1,7 +1,5 @@
-const arrowSize = 120;
-
 export const leftArrowSVG = `
-<svg width="${arrowSize}" height="${arrowSize}" viewBox="0 0 24 24">
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
   <!-- shaft -->
   <line x1="18" y1="12" x2="8" y2="12"
         stroke="currentColor"
@@ -13,7 +11,7 @@ export const leftArrowSVG = `
 `;
 
 export const rightArrowSVG = `
-<svg width="${arrowSize}" height="${arrowSize}" viewBox="0 0 24 24">
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
   <!-- shaft -->
   <line x1="4" y1="12" x2="16" y2="12"
         stroke="currentColor"
@@ -25,7 +23,7 @@ export const rightArrowSVG = `
 `;
 
 export const neutralSVG = `
-<svg width="${arrowSize}" height="${arrowSize}" viewBox="0 0 24 24">
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
   <rect x="4" y="11" width="16" height="2" fill="currentColor"/>
 </svg>
 `;
