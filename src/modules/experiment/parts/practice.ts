@@ -107,10 +107,21 @@ export const buildPractice = (
 
   let practiceRepeatCount = 0;
 
+  const repeatNoticeEntry = {
+    timeline: [
+      {
+        type: htmlButtonResponse,
+        stimulus: `<div class="flanker-feedback"><p>${i18n.t('PRACTICE.REPEAT_NOTICE')}</p></div>`,
+        choices: [i18n.t('FLANKER.CONTINUE_BUTTON')],
+      },
+    ],
+    conditional_function: () => practiceRepeatCount > 0,
+  };
+
   // Repeat if any practice trial was wrong OR comprehension check is wrong.
   // Maximum 1 retry — always proceed after the second attempt regardless.
   const practiceLoop = {
-    timeline: [...prologueTimeline, ...timeline],
+    timeline: [repeatNoticeEntry, ...prologueTimeline, ...timeline],
     loop_function: (data: DataCollection) => {
       if (practiceRepeatCount >= 1) return false;
 
@@ -121,7 +132,7 @@ export const buildPractice = (
       const hadMistake = practiceTrials.some((t) => t.correct === false);
 
       const comprehensionTrials = data
-        .filter({ trial_type: 'comprehension_check' })
+        .filter({ trial_type: 'html-button-response' })
         .values() as TrialRecord[];
       const lastComprehension =
         comprehensionTrials[comprehensionTrials.length - 1];
@@ -137,17 +148,5 @@ export const buildPractice = (
   };
 
   // Ready screen — always shown after the loop regardless of comprehension result
-  return [
-    practiceLoop,
-    {
-      type: htmlButtonResponse,
-      stimulus: `
-        <div class="flanker-ready">
-          <h2>${i18n.t('PRACTICE.READY_TITLE')}</h2>
-          <p>${i18n.t('PRACTICE.READY_MESSAGE')}</p>
-        </div>
-      `,
-      choices: [i18n.t('FLANKER.CONTINUE_BUTTON')],
-    },
-  ];
+  return [practiceLoop];
 };

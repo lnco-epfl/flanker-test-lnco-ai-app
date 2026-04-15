@@ -119,7 +119,7 @@ export async function run({
 
     if (progressBarContainer) {
       const fullscreenButton = document.createElement('button');
-      fullscreenButton.textContent = 'Fullscreen';
+      fullscreenButton.textContent = i18n.t('FLANKER.FULLSCREEN_BUTTON');
       fullscreenButton.className = 'jspsych-btn-progress-bar';
       fullscreenButton.style.marginLeft = '10px';
       fullscreenButton.style.cursor = 'pointer';
@@ -153,13 +153,13 @@ export async function run({
       const dropdown = document.createElement('select');
       dropdown.className = 'custom-dropdown';
       dropdown.innerHTML = `
-          <option value="small" ${appliedFontSize === 'small' ? 'selected' : ''}>Small</option>
-          <option value="normal" ${appliedFontSize === 'normal' ? 'selected' : ''}>Normal</option>
-          <option value="large" ${appliedFontSize === 'large' ? 'selected' : ''}>Large</option>
-          <option value="extra-large" ${appliedFontSize === 'extra-large' ? 'selected' : ''}>Extra Large</option>
+          <option value="small" ${appliedFontSize === 'small' ? 'selected' : ''}>${i18n.t('SETTINGS.FONT_SIZE_SMALL')}</option>
+          <option value="normal" ${appliedFontSize === 'normal' ? 'selected' : ''}>${i18n.t('SETTINGS.FONT_SIZE_NORMAL')}</option>
+          <option value="large" ${appliedFontSize === 'large' ? 'selected' : ''}>${i18n.t('SETTINGS.FONT_SIZE_LARGE')}</option>
+          <option value="extra-large" ${appliedFontSize === 'extra-large' ? 'selected' : ''}>${i18n.t('SETTINGS.FONT_SIZE_EXTRA_LARGE')}</option>
         `;
       const fontSizeTitle = document.createElement('span');
-      fontSizeTitle.innerHTML = 'Font Size:';
+      fontSizeTitle.innerHTML = `${i18n.t('SETTINGS.FONT_SIZE')}:`;
       fontSizeTitle.style.marginLeft = '10px';
       progressBar.appendChild(fontSizeTitle);
       progressBar.appendChild(dropdown);
@@ -179,7 +179,7 @@ export async function run({
   const jsPsych = initJsPsych({
     show_progress_bar: true,
     auto_update_progress_bar: false,
-    progress_bar_message: '',
+    message_progress_bar: i18n.t('PROGRESS_BAR_MESSAGE'),
     display_element: 'jspsych-display-element',
   });
 

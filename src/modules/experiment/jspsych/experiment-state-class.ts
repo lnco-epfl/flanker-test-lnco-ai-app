@@ -61,41 +61,105 @@ function createFlankerTrial(
 }
 
 /**
- * Generates a balanced sequence of Flanker trials
- * @param length - Total number of trials
- * @param congruentPercentage - Percentage of congruent trials
- * @param incongruentPercentage - Percentage of incongruent trials
- * @returns Array of FlankerTrial objects
+ * Fisher-Yates shuffle — returns a new shuffled array.
  */
-export function generateFlankerSequence(
-  length: number,
-  congruentPercentage: number = 33,
-  incongruentPercentage: number = 33,
-): FlankerTrial[] {
-  const trials: FlankerTrial[] = [];
+function shuffleArray<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
-  const congruentCount = Math.round((length * congruentPercentage) / 100);
-  const incongruentCount = Math.round((length * incongruentPercentage) / 100);
-  const neutralCount = length - congruentCount - incongruentCount;
+/**
+ * Returns the maximum consecutive run length of equal elements in an array.
+ */
+function maxRunLength<T>(arr: T[]): number {
+  if (arr.length === 0) return 0;
+  let maxRun = 1;
+  let currentRun = 1;
+  for (let i = 1; i < arr.length; i += 1) {
+    currentRun = arr[i] === arr[i - 1] ? currentRun + 1 : 1;
+    if (currentRun > maxRun) maxRun = currentRun;
+  }
+  return maxRun;
+}
 
-  const conditions: FlankerCondition[] = [
-    ...Array(congruentCount).fill('congruent'),
-    ...Array(incongruentCount).fill('incongruent'),
-    ...Array(neutralCount).fill('neutral'),
+/**
+ * Shuffles items trying to keep max consecutive run ≤ targetMaxRun.
+ * If not achievable after MAX_ATTEMPTS, relaxes the constraint by 1 and retries,
+ * continuing until a valid sequence is found.
+ */
+function shuffleWithMaxRun<T>(items: T[], targetMaxRun = 3): T[] {
+  const MAX_ATTEMPTS = 1000;
+  for (let maxRun = targetMaxRun; maxRun <= items.length; maxRun += 1) {
+    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt += 1) {
+      const shuffled = shuffleArray(items);
+      if (maxRunLength(shuffled) <= maxRun) {
+        return shuffled;
+      }
+    }
+  }
+  return shuffleArray(items);
+}
+
+/**
+ * Generates a balanced sequence of Flanker trials with:
+ * - Exact equal thirds for congruent / incongruent / neutral
+ *   (remainder trials randomly assigned when length % 3 !== 0)
+ * - Exact equal halves for left / right responses
+ *   (remainder trial randomly assigned when length % 2 !== 0)
+ * - No more than 3 consecutive same condition or same direction,
+ *   checked independently; constraint relaxed automatically if unavoidable
+ */
+export function generateFlankerSequence(length: number): FlankerTrial[] {
+  // --- Condition counts: equal thirds, remainder distributed randomly ---
+  const baseConditionCount = Math.floor(length / 3);
+  const conditionRemainder = length % 3;
+  const conditionTypes = shuffleArray<FlankerCondition>([
+    'congruent',
+    'incongruent',
+    'neutral',
+  ]);
+  const conditionCounts: Record<FlankerCondition, number> = {
+    congruent: baseConditionCount,
+    incongruent: baseConditionCount,
+    neutral: baseConditionCount,
+  };
+  for (let i = 0; i < conditionRemainder; i += 1) {
+    conditionCounts[conditionTypes[i]] += 1;
+  }
+  const conditionPool: FlankerCondition[] = [
+    ...Array<FlankerCondition>(conditionCounts.congruent).fill('congruent'),
+    ...Array<FlankerCondition>(conditionCounts.incongruent).fill('incongruent'),
+    ...Array<FlankerCondition>(conditionCounts.neutral).fill('neutral'),
   ];
 
-  // Shuffle array
-  conditions.sort(() => Math.random() - 0.5);
+  // --- Direction counts: equal halves, remainder distributed randomly ---
+  const baseDirectionCount = Math.floor(length / 2);
+  const directionRemainder = length % 2;
+  const directionTypes = shuffleArray<'left' | 'right'>(['left', 'right']);
+  const directionCounts: Record<'left' | 'right', number> = {
+    left: baseDirectionCount,
+    right: baseDirectionCount,
+  };
+  if (directionRemainder > 0) {
+    directionCounts[directionTypes[0]] += 1;
+  }
+  const directionPool: ('left' | 'right')[] = [
+    ...Array<'left'>(directionCounts.left).fill('left'),
+    ...Array<'right'>(directionCounts.right).fill('right'),
+  ];
 
-  // Generate trials
-  conditions.forEach((condition) => {
-    const centerDirection = Math.random() < 0.5 ? 'left' : 'right';
-    trials.push(
-      createFlankerTrial(condition, centerDirection as 'left' | 'right'),
-    );
-  });
+  // --- Shuffle each pool with max-3-in-a-row constraint (independently) ---
+  const conditionSequence = shuffleWithMaxRun(conditionPool, 3);
+  const directionSequence = shuffleWithMaxRun(directionPool, 3);
 
-  return trials;
+  // --- Zip into trials ---
+  return conditionSequence.map((condition, i) =>
+    createFlankerTrial(condition, directionSequence[i]),
+  );
 }
 
 interface State {
@@ -173,8 +237,6 @@ export class ExperimentState {
   initializePracticeSequence(): void {
     this.state.trials = generateFlankerSequence(
       this.flankerSettings.numberOfPracticeTrials,
-      this.flankerSettings.congruentPercentage,
-      this.flankerSettings.incongruentPercentage,
     );
     this.state.currentTrialIndex = 0;
     this.state.practiceMode = true;
@@ -184,8 +246,6 @@ export class ExperimentState {
   initializeMainSequence(): void {
     this.state.trials = generateFlankerSequence(
       this.flankerSettings.numberOfTrials,
-      this.flankerSettings.congruentPercentage,
-      this.flankerSettings.incongruentPercentage,
     );
     this.state.currentTrialIndex = 0;
   }
