@@ -42,6 +42,7 @@ export const buildMainTask = (
       <div class="flanker-ready">
         <h2>${i18n.t('MAIN_TASK.READY_TITLE')}</h2>
         <p>${i18n.t('MAIN_TASK.READY_MESSAGE')}</p>
+        <p>${i18n.t('MAIN_TASK.REMINDER_INSTRUCTIONS')}</p>
         <p class="continue-prompt">${i18n.t('MAIN_TASK.PRESS_TO_BEGIN')}</p>
       </div>
     `,

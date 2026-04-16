@@ -81,6 +81,8 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  min-height: 600px;
+  min-width: 600px;
   height: 100%;
   width: 100%;
   overflow-y: auto;
@@ -209,7 +211,7 @@ body {
 }
 
 .flanker-stimulus {
-  font-size: calc(10rem * var(--flanker-calibration-scale, 1));
+  font-size: calc(15rem * var(--flanker-calibration-scale, 1));
   font-weight: bold;
   letter-spacing: calc(30px * var(--flanker-calibration-scale, 1));
   user-select: none;
@@ -225,14 +227,14 @@ body {
 
 /* SVG stimulus sizing — scales only with calibration scale */
 .flanker-stimulus svg {
-  width: calc(120px * var(--flanker-calibration-scale, 1));
-  height: calc(120px * var(--flanker-calibration-scale, 1));
+  width: calc(240px * var(--flanker-calibration-scale, 1));
+  height: calc(240px * var(--flanker-calibration-scale, 1));
   flex-shrink: 0;
 }
 
 /* Fixation cross */
 .fixation-cross {
-  font-size: 5rem;
+  font-size: 12rem;
   color: #000000;
   margin: 40px 0;
   user-select: none;

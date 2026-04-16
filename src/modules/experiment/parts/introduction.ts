@@ -13,7 +13,6 @@ const experimentBeginTrial = (): Trial => ({
   message: `
     <div class="flanker-intro">
       <h1>${i18n.t('FLANKER.WELCOME_TITLE')}</h1>
-      <p>${i18n.t('FLANKER.WELCOME_MESSAGE')}</p>
     </div>
   `,
   fullscreen_mode: true,
@@ -33,6 +32,7 @@ const taskInstructions = (): Trial[] => [
         <p>${i18n.t('FLANKER.INSTRUCTIONS_OVERVIEW')}</p>
         <p>${i18n.t('FLANKER.RESPONSE_LEFT')}</p>
         <p>${i18n.t('FLANKER.RESPONSE_RIGHT')}</p>
+        <p>${i18n.t('FLANKER.IMAGE_INTRO')}</p>
         <img src="assets/images/arrow-keys.png" alt="Arrow keys" class="flanker-instruction-img" />
       </div>
     `,
@@ -44,6 +44,7 @@ const taskInstructions = (): Trial[] => [
     message: `
       <div class="flanker-instructions">
         <h3>${i18n.t('FLANKER.EXAMPLES_TITLE')}</h3>
+        <p>${i18n.t('FLANKER.EXAMPLES_SUBTEXT')}</p>
         <p>${i18n.t('FLANKER.EXAMPLE_CONGRUENT')}</p>
         <img src="assets/images/flanker-congruent.png" alt="Congruent flanker example" class="flanker-instruction-img" />
         <p>${i18n.t('FLANKER.EXAMPLE_INCONGRUENT')}</p>
@@ -59,10 +60,12 @@ const taskInstructions = (): Trial[] => [
     choices: [i18n.t('FLANKER.START_PRACTICE_BUTTON')],
     message: `
       <div class="flanker-instructions">
-        <p class="important">${i18n.t('FLANKER.REMEMBER_NOTE')}</p>
+        <p>${i18n.t('FLANKER.TRAINING_INTRO')}</p>
         <p>${i18n.t('FLANKER.DURATION_NOTE')}</p>
         <p>${i18n.t('FLANKER.FIXATION_NOTE')}</p>
+        <p class="important">${i18n.t('FLANKER.REMEMBER_NOTE')}</p>
         <p>${i18n.t('FLANKER.ACCURACY_NOTE')}</p>
+        <p>${i18n.t('FLANKER.ERRORS_NOTE')}</p>
       </div>
     `,
   },
