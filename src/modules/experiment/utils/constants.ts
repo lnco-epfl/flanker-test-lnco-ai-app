@@ -3,8 +3,7 @@ export const leftArrowSVG = `
   <!-- shaft -->
   <line x1="18" y1="12" x2="8" y2="12"
         stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round" />
+        stroke-width="2" />
   <!-- head -->
   <path d="M4 12 L8 8 L8 16 Z" fill="currentColor" />
 </svg>
@@ -15,8 +14,7 @@ export const rightArrowSVG = `
   <!-- shaft -->
   <line x1="4" y1="12" x2="16" y2="12"
         stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round" />
+        stroke-width="2" />
   <!-- head -->
   <path d="M20 12 L16 8 L16 16 Z" fill="currentColor" />
 </svg>

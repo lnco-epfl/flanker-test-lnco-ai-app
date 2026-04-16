@@ -75,17 +75,15 @@ export const buildPractice = (
   timeline.push(practiceFeedbackTrial(state));
 
   // Training complete screen
-  timeline.push({
-    type: htmlButtonResponse,
-    stimulus: `
-      <div class="flanker-feedback">
-        <h2>${i18n.t('PRACTICE.COMPLETE_TITLE')}</h2>
-        <p>${i18n.t('PRACTICE.COMPLETE_MESSAGE')}</p>
-        <p class="important">${i18n.t('PRACTICE.COMPLETE_REMEMBER')}</p>
-      </div>
-    `,
-    choices: [i18n.t('PRACTICE.CONTINUE_BUTTON')],
-  });
+  // timeline.push({
+  //   type: htmlButtonResponse,
+  //   stimulus: `
+  //     <div class="flanker-feedback">
+  //       <h2>${i18n.t('PRACTICE.COMPLETE_TITLE')}</h2>
+  //     </div>
+  //   `,
+  //   choices: [i18n.t('PRACTICE.CONTINUE_BUTTON')],
+  // });
 
   // Comprehension check — correct answer is button index 0 ("The center arrow")
   timeline.push({
@@ -129,7 +127,7 @@ export const buildPractice = (
       const practiceTrials = data
         .filter({ practice: true })
         .values() as TrialRecord[];
-      const hadMistake = practiceTrials.some((t) => t.correct === false);
+      const hadMistake = !practiceTrials.some((t) => t.correct === true);
 
       const comprehensionTrials = data
         .filter({ trial_type: 'html-button-response' })
