@@ -1,4 +1,5 @@
 import FullscreenPlugin from '@jspsych/plugin-fullscreen';
+import HtmlButtonResponsePlugin from '@jspsych/plugin-html-button-response';
 
 import { ExperimentState } from '../jspsych/experiment-state-class';
 import i18n from '../jspsych/i18n';
@@ -9,10 +10,11 @@ import { Timeline, Trial } from '../utils/types';
  */
 const experimentBeginTrial = (): Trial => ({
   type: FullscreenPlugin,
-  choices: [i18n.t('FLANKER.START_BUTTON')],
+  button_label: i18n.t('FLANKER.START_BUTTON'),
   message: `
     <div class="flanker-intro">
       <h1>${i18n.t('FLANKER.WELCOME_TITLE')}</h1>
+      <p>${i18n.t('FLANKER.WELCOME_MESSAGE')}</p>
     </div>
   `,
   fullscreen_mode: true,
@@ -24,9 +26,9 @@ const experimentBeginTrial = (): Trial => ({
 const taskInstructions = (): Trial[] => [
   // Page 1: Overview and response keys
   {
-    type: FullscreenPlugin,
+    type: HtmlButtonResponsePlugin,
     choices: [i18n.t('FLANKER.CONTINUE_BUTTON')],
-    message: `
+    stimulus: `
       <div class="flanker-instructions">
         <h2>${i18n.t('FLANKER.INSTRUCTIONS_TITLE')}</h2>
         <p>${i18n.t('FLANKER.INSTRUCTIONS_OVERVIEW')}</p>
@@ -34,14 +36,16 @@ const taskInstructions = (): Trial[] => [
         <p>${i18n.t('FLANKER.RESPONSE_RIGHT')}</p>
         <p>${i18n.t('FLANKER.IMAGE_INTRO')}</p>
         <img src="assets/images/arrow-keys.png" alt="Arrow keys" class="flanker-instruction-img" />
+        <p>${i18n.t('FLANKER.KEYBOARD_NOTE')}</p>
+        <img src="assets/images/hand.png" alt="Keyboard layout" class="flanker-instruction-img" />
       </div>
     `,
   },
   // Page 2: Examples
   {
-    type: FullscreenPlugin,
+    type: HtmlButtonResponsePlugin,
     choices: [i18n.t('FLANKER.CONTINUE_BUTTON')],
-    message: `
+    stimulus: `
       <div class="flanker-instructions">
         <h3>${i18n.t('FLANKER.EXAMPLES_TITLE')}</h3>
         <p>${i18n.t('FLANKER.EXAMPLES_SUBTEXT')}</p>
@@ -56,9 +60,9 @@ const taskInstructions = (): Trial[] => [
   },
   // Page 3: Reminders
   {
-    type: FullscreenPlugin,
+    type: HtmlButtonResponsePlugin,
     choices: [i18n.t('FLANKER.START_PRACTICE_BUTTON')],
-    message: `
+    stimulus: `
       <div class="flanker-instructions">
         <p>${i18n.t('FLANKER.TRAINING_INTRO')}</p>
         <p>${i18n.t('FLANKER.DURATION_NOTE')}</p>
