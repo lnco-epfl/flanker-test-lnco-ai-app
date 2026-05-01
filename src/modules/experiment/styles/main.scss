@@ -15,10 +15,46 @@ body {
   --flanker-calibration-scale: 1;
 }
 
-@media (display-mode: fullscreen) {
+// Non-fullscreen defaults
+.player-view {
+  min-height: 600px;
+}
+
+.scroll-hint {
+  display: none;
+}
+
+// Fullscreen layout — :fullscreen fires when the Fullscreen API is active
+// (document.documentElement.requestFullscreen), unlike display-mode which
+// only matches PWA manifests.
+// The two blocks are intentionally separate: grouping them with a comma would
+// cause browsers to drop the entire rule when they don't recognise one selector.
+@mixin fullscreen-layout {
   .player-view {
-    height: 100%;
+    height: 100vh;
+    min-height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
+
+  .player-scroll-container {
+    flex: 1 1 100%;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .scroll-hint {
+    display: block;
+  }
+}
+
+:fullscreen {
+  @include fullscreen-layout;
+}
+
+:-webkit-full-screen {
+  @include fullscreen-layout;
 }
 
 /* Base font sizes for different classes */
@@ -62,7 +98,7 @@ body {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   margin: 0;
   padding: 0;
 }
@@ -72,7 +108,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  min-height: 100%;
   padding-top: calc(var(--font-scale) * 50px);
 }
 
@@ -81,15 +117,21 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 600px;
   min-width: 600px;
-  height: 100%;
-  width: 100%;
-  overflow-y: auto;
+  min-height: 100%;
   overflow-x: hidden;
   font-size: calc(var(--font-scale) * 1rem);
   gap: 5px;
   color: #000000;
+}
+
+// jsPsych injects its own <style> at runtime with overflow-y: auto on
+// .jspsych-content. The ID selector gives us higher specificity to win.
+#jspsych-display-element {
+  .jspsych-content-wrapper,
+  .jspsych-content {
+    overflow-y: hidden;
+  }
 }
 
 #jspsych-progressbar-container {
@@ -143,7 +185,6 @@ body {
     0px 3px 1px -2px rgba(0, 0, 0, 0.2),
     0px 2px 2px 0px rgba(0, 0, 0, 0.14),
     0px 1px 5px 0px rgba(0, 0, 0, 0.12);
-  text-transform: capitalize;
   text-align: center;
   cursor: pointer;
 }
@@ -227,8 +268,8 @@ body {
 
 /* SVG stimulus sizing — scales only with calibration scale */
 .flanker-stimulus svg {
-  width: calc(240px * var(--flanker-calibration-scale, 1));
-  height: calc(240px * var(--flanker-calibration-scale, 1));
+  width: calc(180px * var(--flanker-calibration-scale, 1));
+  height: calc(180px * var(--flanker-calibration-scale, 1));
   flex-shrink: 0;
 }
 
@@ -341,7 +382,7 @@ body {
 
 .important {
   font-weight: bold;
-  color: #ff9800;
+  color: #ff9800 !important;
 }
 
 /* Comprehension check — stacked buttons, white/black style */
@@ -367,4 +408,42 @@ body {
   max-width: 100%;
   display: block;
   margin: 0.5rem auto 1rem;
+}
+
+/* Scroll hint buttons — visible only when content overflows the viewport */
+.scroll-hint {
+  position: fixed;
+  right: 32px;
+  z-index: 1000;
+  padding: 16px 28px;
+  background: rgba(44, 62, 80, 0.9);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(6px);
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease;
+  user-select: none;
+
+  &:hover {
+    background: rgba(44, 62, 80, 1);
+    transform: scale(1.06);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &--down {
+    bottom: 32px;
+  }
+
+  &--up {
+    top: 90px;
+  }
 }

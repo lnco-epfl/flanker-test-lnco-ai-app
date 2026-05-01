@@ -1,4 +1,5 @@
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Typography } from '@mui/material';
 
@@ -15,6 +16,7 @@ import { AllSettingsType, useSettings } from '../context/SettingsContext';
 import { run } from '../experiment/experiment';
 
 export const ExperimentLoader: FC = () => {
+  const { t } = useTranslation();
   const settings = useSettings();
   const localContext = useLocalContext();
   const { data: appContextData } = hooks.useAppContext();
@@ -36,6 +38,50 @@ export const ExperimentLoader: FC = () => {
       contextActors.find((actor) => actor.id === localActorId)?.name ?? '';
   }
   const jsPsychRef = useRef<null | Promise<JsPsych>>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollUp, setCanScrollUp] = useState(false);
+  const [canScrollDown, setCanScrollDown] = useState(false);
+
+  const updateScrollState = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const { scrollTop, scrollHeight, clientHeight } = el;
+    setCanScrollUp(scrollTop > 8);
+    setCanScrollDown(scrollTop + clientHeight < scrollHeight - 8);
+  }, []);
+
+  const resetAndUpdateScroll = useCallback(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+    updateScrollState();
+  }, [updateScrollState]);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return undefined;
+    const ro = new ResizeObserver(updateScrollState);
+    const mo = new MutationObserver(resetAndUpdateScroll);
+    el.addEventListener('scroll', updateScrollState, { passive: true });
+    ro.observe(el);
+    mo.observe(el, { childList: true, subtree: true });
+    updateScrollState();
+    return () => {
+      el.removeEventListener('scroll', updateScrollState);
+      ro.disconnect();
+      mo.disconnect();
+    };
+  }, [updateScrollState, resetAndUpdateScroll]);
+
+  const scrollPage = (direction: 'up' | 'down'): void => {
+    scrollRef.current?.scrollBy({
+      top:
+        direction === 'down'
+          ? window.innerHeight * 0.6
+          : -window.innerHeight * 0.6,
+      behavior: 'smooth',
+    });
+  };
 
   const { status, experimentResultsAppData, setExperimentResult } =
     useExperimentResults();
@@ -120,5 +166,31 @@ export const ExperimentLoader: FC = () => {
   if (completedContent) {
     return completedContent;
   }
-  return <div id="jspsych-display-element" />;
+  return (
+    <>
+      <div className="player-scroll-container" ref={scrollRef}>
+        <div id="jspsych-display-element" />
+      </div>
+      {canScrollDown && (
+        <button
+          type="button"
+          className="scroll-hint scroll-hint--down"
+          onClick={() => scrollPage('down')}
+          aria-label={t('SCROLL_DOWN')}
+        >
+          {t('SCROLL_DOWN')}
+        </button>
+      )}
+      {canScrollUp && (
+        <button
+          type="button"
+          className="scroll-hint scroll-hint--up"
+          onClick={() => scrollPage('up')}
+          aria-label={t('SCROLL_UP')}
+        >
+          {t('SCROLL_UP')}
+        </button>
+      )}
+    </>
+  );
 };
