@@ -194,7 +194,7 @@ export const ExperimentLoader: FC = () => {
       <div className="player-scroll-container" ref={scrollRef}>
         <div id="jspsych-display-element" />
       </div>
-      <AudioNarrationControls narration={narration} position="bottom-right" />
+      <AudioNarrationControls narration={narration} position="bottom-left" />
       {canScrollDown && (
         <button
           type="button"
