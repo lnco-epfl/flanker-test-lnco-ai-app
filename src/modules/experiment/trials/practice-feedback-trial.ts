@@ -4,7 +4,6 @@ import { AudioNarration } from 'jspsych-audio-narration';
 
 import { ExperimentState } from '../jspsych/experiment-state-class';
 import i18n from '../jspsych/i18n';
-import { TIMING } from '../utils/constants';
 import { Trial } from '../utils/types';
 
 export const practiceFeedbackTrial = (
