@@ -10,6 +10,8 @@ import PreloadPlugin from '@jspsych/plugin-preload';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Marked } from '@ts-stack/markdown';
 import { DataCollection, JsPsych, initJsPsych } from 'jspsych';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { AudioNarration } from 'jspsych-audio-narration';
 
 import { ScreenCalibration } from '@/utils/screenCalibration';
 
@@ -49,6 +51,7 @@ const getEndPage = ({
 export async function run({
   assetPaths,
   input,
+  narration,
   updateData,
 }: {
   assetPaths: { images: string[]; audio: string[]; video: string[] };
@@ -58,6 +61,7 @@ export async function run({
     participantName: string;
     screenCalibration?: ScreenCalibration;
   };
+  narration: AudioNarration;
   updateData: (data: DataCollection, settings: AllSettingsType) => void;
 }): Promise<JsPsych> {
   // Apply language setting
@@ -217,7 +221,7 @@ export async function run({
   // When practice is enabled, instruction pages are the prologue of the retry
   // loop so participants see instructions again on retry (but not the welcome).
   if (state.getGeneralSettings().skipPractice) {
-    const instrPages = buildInstructionPages(state);
+    const instrPages = buildInstructionPages(state, narration);
     if (instrPages.length > 0) {
       timeline.push({ timeline: instrPages });
     }
@@ -225,16 +229,17 @@ export async function run({
     timeline.push({
       timeline: buildPractice(
         state,
+        narration,
         updateDataWithSettings,
         jsPsych,
-        buildInstructionPages(state),
+        buildInstructionPages(state, narration),
       ),
     });
   }
 
   // Main task
   timeline.push({
-    timeline: buildMainTask(state, updateDataWithSettings, jsPsych),
+    timeline: buildMainTask(state, updateDataWithSettings, jsPsych, narration),
     on_timeline_start() {
       state.startMainTask();
       if (jsPsych.progressBar) {

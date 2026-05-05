@@ -1,5 +1,7 @@
 import htmlKeyboardResponse from '@jspsych/plugin-html-keyboard-response';
 import type { DataCollection, JsPsych } from 'jspsych';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { AudioNarration } from 'jspsych-audio-narration/dist/AudioNarration';
 
 import { AllSettingsType } from '@/modules/context/SettingsContext';
 
@@ -16,6 +18,7 @@ export const buildMainTask = (
   state: ExperimentState,
   updateData: (data: DataCollection, settings: AllSettingsType) => void,
   jsPsych: JsPsych,
+  narration: AudioNarration,
 ): Timeline => {
   const timeline: Timeline = [];
 
@@ -47,6 +50,12 @@ export const buildMainTask = (
       </div>
     `,
     choices: [' '],
+    on_start: () => {
+      narration.play('assets/audio/flanker_main_ready.mp3');
+    },
+    on_finish: () => {
+      narration.stop();
+    },
   });
 
   // Get the full sequence
@@ -100,6 +109,12 @@ export const buildMainTask = (
       </div>
     `,
     choices: [' '],
+    on_start: () => {
+      narration.play('assets/audio/flanker_main_end.mp3');
+    },
+    on_finish: () => {
+      narration.stop();
+    },
   });
 
   return timeline;

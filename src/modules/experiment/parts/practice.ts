@@ -1,5 +1,7 @@
 import htmlButtonResponse from '@jspsych/plugin-html-button-response';
 import type { DataCollection, JsPsych } from 'jspsych';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { AudioNarration } from 'jspsych-audio-narration';
 
 import { AllSettingsType } from '@/modules/context/SettingsContext';
 
@@ -14,6 +16,7 @@ import { Timeline } from '../utils/types';
  */
 export const buildPractice = (
   state: ExperimentState,
+  narration: AudioNarration,
   updateData?: (data: DataCollection, settings: AllSettingsType) => void,
   jsPsych?: JsPsych,
   prologueTimeline: Timeline = [],
@@ -72,7 +75,7 @@ export const buildPractice = (
   }
 
   // Add practice feedback screen
-  timeline.push(practiceFeedbackTrial(state));
+  timeline.push(practiceFeedbackTrial(state, narration));
 
   // Training complete screen
   // timeline.push({
@@ -90,7 +93,7 @@ export const buildPractice = (
     type: htmlButtonResponse,
     stimulus: `
       <div class="flanker-feedback">
-        <p class="important">${i18n.t('PRACTICE.COMPREHENSION_QUESTION')}</p>
+        ${i18n.t('PRACTICE.COMPREHENSION_QUESTION')}
       </div>
     `,
     choices: [
@@ -101,6 +104,12 @@ export const buildPractice = (
     button_layout: 'flex',
     data: { trial_type: 'comprehension_check' },
     css_classes: ['flanker-comprehension'],
+    on_start: () => {
+      narration.play('assets/audio/flanker_practice_comprehension.mp3');
+    },
+    on_finish: () => {
+      narration.stop();
+    },
   });
 
   let practiceRepeatCount = 0;
@@ -111,6 +120,12 @@ export const buildPractice = (
         type: htmlButtonResponse,
         stimulus: `<div class="flanker-feedback"><p>${i18n.t('PRACTICE.REPEAT_NOTICE')}</p></div>`,
         choices: [i18n.t('FLANKER.CONTINUE_BUTTON')],
+        on_start: () => {
+          narration.play('assets/audio/flanker_practice_repeat.mp3');
+        },
+        on_finish: () => {
+          narration.stop();
+        },
       },
     ],
     conditional_function: () => practiceRepeatCount > 0,
