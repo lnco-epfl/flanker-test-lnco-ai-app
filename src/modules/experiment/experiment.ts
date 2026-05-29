@@ -196,6 +196,11 @@ export async function run({
   };
   window.addEventListener('beforeunload', blockUnload);
 
+  // Compute starting progress for the main task based on which sections are shown
+  const introProgress = state.getGeneralSettings().skipInstructions ? 0 : 0.15;
+  const practiceProgress = state.getGeneralSettings().skipPractice ? 0 : 0.15;
+  const mainTaskStartProgress = introProgress + practiceProgress;
+
   // Build experiment timeline
   const timeline: Timeline = [];
 
@@ -221,7 +226,7 @@ export async function run({
   // When practice is enabled, instruction pages are the prologue of the retry
   // loop so participants see instructions again on retry (but not the welcome).
   if (state.getGeneralSettings().skipPractice) {
-    const instrPages = buildInstructionPages(state, narration);
+    const instrPages = buildInstructionPages(state, narration, jsPsych);
     if (instrPages.length > 0) {
       timeline.push({ timeline: instrPages });
     }
@@ -232,18 +237,29 @@ export async function run({
         narration,
         updateDataWithSettings,
         jsPsych,
-        buildInstructionPages(state, narration),
+        buildInstructionPages(state, narration, jsPsych),
       ),
+      on_timeline_finish() {
+        if (jsPsych.progressBar) {
+          jsPsych.progressBar.progress = mainTaskStartProgress;
+        }
+      },
     });
   }
 
   // Main task
   timeline.push({
-    timeline: buildMainTask(state, updateDataWithSettings, jsPsych, narration),
+    timeline: buildMainTask(
+      state,
+      updateDataWithSettings,
+      jsPsych,
+      narration,
+      mainTaskStartProgress,
+    ),
     on_timeline_start() {
       state.startMainTask();
       if (jsPsych.progressBar) {
-        jsPsych.progressBar.progress = 0.5;
+        jsPsych.progressBar.progress = mainTaskStartProgress;
       }
     },
   });

@@ -19,6 +19,7 @@ export const buildMainTask = (
   updateData: (data: DataCollection, settings: AllSettingsType) => void,
   jsPsych: JsPsych,
   narration: AudioNarration,
+  startProgress: number = 0,
 ): Timeline => {
   const timeline: Timeline = [];
 
@@ -60,6 +61,7 @@ export const buildMainTask = (
 
   // Get the full sequence
   const trials = state.getTrials();
+  const totalTrials = trials.length;
 
   // Create main task trials
   for (let i = 0; i < trials.length; i += 1) {
@@ -78,6 +80,11 @@ export const buildMainTask = (
       trial_index: i,
       state,
       on_finish: () => {
+        if (jsPsych.progressBar) {
+          // eslint-disable-next-line no-param-reassign
+          jsPsych.progressBar.progress =
+            startProgress + (0.98 - startProgress) * ((i + 1) / totalTrials);
+        }
         // Save data after each trial
         if (updateData && jsPsych) {
           updateData(jsPsych.data.get(), state.getAllSettings());

@@ -18,6 +18,7 @@
     "FLANKER": {
       "WELCOME_TITLE": "Test d'attention",
       "WELCOME_MESSAGE": "Cliquez sur le bouton ci-dessous pour passer en plein écran et commencer.",
+      "CLICK_TO_CONTINUE": "Cliquez sur le bouton ci-dessous pour continuer.",
       "START_BUTTON": "Plein écran",
       "CONTINUE_BUTTON": "Continuer",
       "INSTRUCTIONS_TITLE": "Instructions pour le test d'attention",
