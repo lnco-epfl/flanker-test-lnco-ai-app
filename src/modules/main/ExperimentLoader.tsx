@@ -6,6 +6,11 @@ import { Typography } from '@mui/material';
 import { useLocalContext } from '@graasp/apps-query-client';
 
 import { DataCollection, JsPsych } from 'jspsych';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {
+  AudioNarration,
+  AudioNarrationControls,
+} from 'jspsych-audio-narration';
 
 import { hooks } from '@/config/queryClient';
 import { parseScreenCalibration } from '@/utils/screenCalibration';
@@ -17,6 +22,7 @@ import { run } from '../experiment/experiment';
 
 export const ExperimentLoader: FC = () => {
   const { t } = useTranslation();
+  const narration = useRef(new AudioNarration()).current;
   const settings = useSettings();
   const localContext = useLocalContext();
   const { data: appContextData } = hooks.useAppContext();
@@ -106,8 +112,23 @@ export const ExperimentLoader: FC = () => {
   };
 
   const assetPath = {
-    images: [],
-    audio: [],
+    images: [
+      'assets/images/flanker_congruent.png',
+      'assets/images/flanker_incongruent.png',
+      'assets/images/flanker_neutral.png',
+      'assets/images/arrow-keys.png',
+      'assets/images/hand.png',
+    ],
+    audio: [
+      'assets/audio/flanker_practice_result.mp3',
+      'assets/audio/flanker_practice_repeat.mp3',
+      'assets/audio/flanker_practice_comprehension.mp3',
+      'assets/audio/flanker_main_ready.mp3',
+      'assets/audio/flanker_main_end.mp3',
+      'assets/audio/flanker_instructions_page1.mp3',
+      'assets/audio/flanker_instructions_page2.mp3',
+      'assets/audio/flanker_instructions_page3.mp3',
+    ],
     video: [],
     misc: [],
   };
@@ -133,6 +154,7 @@ export const ExperimentLoader: FC = () => {
             participantName,
             screenCalibration,
           },
+          narration,
           // eslint-disable-next-line @typescript-eslint/no-shadow
           updateData: (data, settings) => updateData(data, settings),
         });
@@ -155,6 +177,7 @@ export const ExperimentLoader: FC = () => {
             participantName,
             screenCalibration,
           },
+          narration,
           // eslint-disable-next-line @typescript-eslint/no-shadow
           updateData: (data, settings) => updateData(data, settings),
         });
@@ -171,6 +194,7 @@ export const ExperimentLoader: FC = () => {
       <div className="player-scroll-container" ref={scrollRef}>
         <div id="jspsych-display-element" />
       </div>
+      <AudioNarrationControls narration={narration} position="bottom-left" />
       {canScrollDown && (
         <button
           type="button"

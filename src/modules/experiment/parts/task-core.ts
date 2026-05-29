@@ -1,5 +1,7 @@
 import htmlKeyboardResponse from '@jspsych/plugin-html-keyboard-response';
 import type { DataCollection, JsPsych } from 'jspsych';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { AudioNarration } from 'jspsych-audio-narration/dist/AudioNarration';
 
 import { AllSettingsType } from '@/modules/context/SettingsContext';
 
@@ -16,6 +18,8 @@ export const buildMainTask = (
   state: ExperimentState,
   updateData: (data: DataCollection, settings: AllSettingsType) => void,
   jsPsych: JsPsych,
+  narration: AudioNarration,
+  startProgress: number = 0,
 ): Timeline => {
   const timeline: Timeline = [];
 
@@ -47,10 +51,17 @@ export const buildMainTask = (
       </div>
     `,
     choices: [' '],
+    on_start: () => {
+      narration.play('assets/audio/flanker_main_ready.mp3');
+    },
+    on_finish: () => {
+      narration.stop();
+    },
   });
 
   // Get the full sequence
   const trials = state.getTrials();
+  const totalTrials = trials.length;
 
   // Create main task trials
   for (let i = 0; i < trials.length; i += 1) {
@@ -69,6 +80,11 @@ export const buildMainTask = (
       trial_index: i,
       state,
       on_finish: () => {
+        if (jsPsych.progressBar) {
+          // eslint-disable-next-line no-param-reassign
+          jsPsych.progressBar.progress =
+            startProgress + (0.98 - startProgress) * ((i + 1) / totalTrials);
+        }
         // Save data after each trial
         if (updateData && jsPsych) {
           updateData(jsPsych.data.get(), state.getAllSettings());
@@ -100,6 +116,12 @@ export const buildMainTask = (
       </div>
     `,
     choices: [' '],
+    on_start: () => {
+      narration.play('assets/audio/flanker_main_end.mp3');
+    },
+    on_finish: () => {
+      narration.stop();
+    },
   });
 
   return timeline;

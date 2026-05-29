@@ -1,11 +1,15 @@
 import htmlKeyboardResponse from '@jspsych/plugin-html-keyboard-response';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { AudioNarration } from 'jspsych-audio-narration';
 
 import { ExperimentState } from '../jspsych/experiment-state-class';
 import i18n from '../jspsych/i18n';
-import { TIMING } from '../utils/constants';
 import { Trial } from '../utils/types';
 
-export const practiceFeedbackTrial = (state: ExperimentState): Trial => ({
+export const practiceFeedbackTrial = (
+  state: ExperimentState,
+  narration: AudioNarration,
+): Trial => ({
   type: htmlKeyboardResponse,
   stimulus: () => {
     const accuracy = state.getPracticeAccuracy();
@@ -25,5 +29,10 @@ export const practiceFeedbackTrial = (state: ExperimentState): Trial => ({
     `;
   },
   choices: [' '],
-  post_trial_gap: TIMING.POST_TRIAL_GAP,
+  on_start: () => {
+    narration.play('assets/audio/flanker_practice_result.mp3');
+  },
+  on_finish: () => {
+    narration.stop();
+  },
 });

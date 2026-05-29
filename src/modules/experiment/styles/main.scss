@@ -109,7 +109,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100%;
-  padding-top: calc(var(--font-scale) * 50px);
+  padding: calc(var(--font-scale) * 50px) 0;
 }
 
 .jspsych-content {

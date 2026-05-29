@@ -1,5 +1,8 @@
 import FullscreenPlugin from '@jspsych/plugin-fullscreen';
 import HtmlButtonResponsePlugin from '@jspsych/plugin-html-button-response';
+import type { JsPsych } from 'jspsych';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { AudioNarration } from 'jspsych-audio-narration';
 
 import { ExperimentState } from '../jspsych/experiment-state-class';
 import i18n from '../jspsych/i18n';
@@ -23,7 +26,10 @@ const experimentBeginTrial = (): Trial => ({
 /**
  * Detailed task instructions — single comprehensive screen matching neuropsychologist spec
  */
-const taskInstructions = (): Trial[] => [
+const taskInstructions = (
+  narration: AudioNarration,
+  jsPsych?: JsPsych,
+): Trial[] => [
   // Page 1: Overview and response keys
   {
     type: HtmlButtonResponsePlugin,
@@ -38,8 +44,17 @@ const taskInstructions = (): Trial[] => [
         <img src="assets/images/arrow-keys.png" alt="Arrow keys" class="flanker-instruction-img" />
         <p>${i18n.t('FLANKER.KEYBOARD_NOTE')}</p>
         <img src="assets/images/hand.png" alt="Keyboard layout" class="flanker-instruction-img" />
+        <p>${i18n.t('FLANKER.CLICK_TO_CONTINUE')}</p>
       </div>
     `,
+    on_start: () => {
+      narration.play('assets/audio/flanker_instructions_page1.mp3');
+    },
+    on_finish: () => {
+      narration.stop();
+      // eslint-disable-next-line no-param-reassign
+      if (jsPsych?.progressBar) jsPsych.progressBar.progress = 0.05;
+    },
   },
   // Page 2: Examples
   {
@@ -55,8 +70,17 @@ const taskInstructions = (): Trial[] => [
         <img src="assets/images/flanker-incongruent.png" alt="Incongruent flanker example" class="flanker-instruction-img" />
         <p>${i18n.t('FLANKER.EXAMPLE_NEUTRAL')}</p>
         <img src="assets/images/flanker-neutral.png" alt="Neutral flanker example" class="flanker-instruction-img" />
+        <p>${i18n.t('FLANKER.CLICK_TO_CONTINUE')}</p>
       </div>
     `,
+    on_start: () => {
+      narration.play('assets/audio/flanker_instructions_page2.mp3');
+    },
+    on_finish: () => {
+      narration.stop();
+      // eslint-disable-next-line no-param-reassign
+      if (jsPsych?.progressBar) jsPsych.progressBar.progress = 0.1;
+    },
   },
   // Page 3: Reminders
   {
@@ -70,8 +94,17 @@ const taskInstructions = (): Trial[] => [
         <p class="important">${i18n.t('FLANKER.REMEMBER_NOTE')}</p>
         <p>${i18n.t('FLANKER.ACCURACY_NOTE')}</p>
         <p>${i18n.t('FLANKER.ERRORS_NOTE')}</p>
+        <p>${i18n.t('FLANKER.CLICK_TO_CONTINUE')}</p>
       </div>
     `,
+    on_start: () => {
+      narration.play('assets/audio/flanker_instructions_page3.mp3');
+    },
+    on_finish: () => {
+      narration.stop();
+      // eslint-disable-next-line no-param-reassign
+      if (jsPsych?.progressBar) jsPsych.progressBar.progress = 0.15;
+    },
   },
 ];
 
@@ -79,15 +112,23 @@ const taskInstructions = (): Trial[] => [
 export const buildWelcomeScreen = (): Trial[] => [experimentBeginTrial()];
 
 /** Detailed instruction pages — shown inside the retry loop when practice is enabled */
-export const buildInstructionPages = (state: ExperimentState): Timeline => {
+export const buildInstructionPages = (
+  state: ExperimentState,
+  narration: AudioNarration,
+  jsPsych?: JsPsych,
+): Timeline => {
   if (state.getGeneralSettings().skipInstructions) return [];
-  return taskInstructions();
+  return taskInstructions(narration, jsPsych);
 };
 
 /**
  * Build introduction timeline
  */
-export const buildIntroduction = (state: ExperimentState): Timeline => {
+export const buildIntroduction = (
+  state: ExperimentState,
+  narration: AudioNarration,
+  jsPsych?: JsPsych,
+): Timeline => {
   const instructionTimeline: Timeline = [];
 
   // Skip instructions if configured
@@ -98,7 +139,7 @@ export const buildIntroduction = (state: ExperimentState): Timeline => {
 
   // Full introduction sequence
   instructionTimeline.push(experimentBeginTrial());
-  instructionTimeline.push(...taskInstructions());
+  instructionTimeline.push(...taskInstructions(narration, jsPsych));
 
   return instructionTimeline;
 };
