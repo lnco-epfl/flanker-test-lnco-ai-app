@@ -187,6 +187,14 @@ export async function run({
     display_element: 'jspsych-display-element',
   });
 
+  const participantProps: Record<string, string> = {};
+  if (input.screenCalibration?.participantId)
+    participantProps.participantId = input.screenCalibration.participantId;
+  if (input.screenCalibration?.participantCode)
+    participantProps.participantCode = input.screenCalibration.participantCode;
+  if (Object.keys(participantProps).length > 0)
+    jsPsych.data.addProperties(participantProps);
+
   const blockUnload = (event: BeforeUnloadEvent): string => {
     event.preventDefault();
     // eslint-disable-next-line no-param-reassign
