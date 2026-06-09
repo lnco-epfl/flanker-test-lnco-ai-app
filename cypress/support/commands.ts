@@ -1,5 +1,5 @@
 /// <reference types="../../src/window" />
-import { Database } from '@graasp/apps-query-client';
+import { Database } from '@lnco-ai/apps-query-client';
 
 import { CURRENT_MEMBER, MEMBERS } from '../fixtures/members';
 import { MOCK_SERVER_ITEM } from '../fixtures/mockItem';
