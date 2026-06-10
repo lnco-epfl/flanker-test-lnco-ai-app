@@ -65,6 +65,9 @@
       "COUNTDOWN": "Resuming in:",
       "PRESS_TO_CONTINUE": "Or press spacebar to continue immediately"
     },
+    "COUNTDOWN": {
+      "GO": "Go!"
+    },
     "SCROLL_DOWN": "↓ Scroll down",
     "SCROLL_UP": "↑ Scroll up",
     "PROGRESS_BAR_MESSAGE": "Completion Progress",

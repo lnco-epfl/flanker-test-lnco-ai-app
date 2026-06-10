@@ -29,9 +29,9 @@
       "KEYBOARD_NOTE": "Pour faciliter vos réponses, nous vous recommandons d'utiliser un doigt par touche fléchée pendant l'exercice.",
       "EXAMPLES_TITLE": "Voici quelques exemples (regardez uniquement, vous ne devez rien faire pour l'instant) :",
       "EXAMPLES_SUBTEXT": "Les symboles sur les côtés ne sont pas importants. Seule la flèche du centre est importante.",
-      "EXAMPLE_CONGRUENT": "Example 1 : La flèche centrale (ici encerclée) pointe vers la DROITE. <br/><b style='color: orange;'>On appuie sur la touche DROITE.</b>",
-      "EXAMPLE_INCONGRUENT": "Example 2 : La flèche centrale (ici encerclée) pointe vers la GAUCHE. <br/><b style='color: orange;'>On appuie sur la touche GAUCHE.</b>",
-      "EXAMPLE_NEUTRAL": "Example 3 : La flèche centrale (ici encerclée) pointe vers la DROITE. <br/><b style='color: orange;'>On appuie sur la touche DROITE.</b>",
+      "EXAMPLE_CONGRUENT": "Example 1 : La flèche centrale (ici encerclée) pointe vers la DROITE. <br/><b style='color: orange;'>On appuie sur la touche DROITE du clavier.</b>",
+      "EXAMPLE_INCONGRUENT": "Example 2 : La flèche centrale (ici encerclée) pointe vers la GAUCHE. <br/><b style='color: orange;'>On appuie sur la touche GAUCHE du clavier.</b>",
+      "EXAMPLE_NEUTRAL": "Example 3 : La flèche centrale (ici encerclée) pointe vers la DROITE. <br/><b style='color: orange;'>On appuie sur la touche DROITE du clavier.</b>",
       "TRAINING_INTRO": "Avant de commencer le test, nous allons faire un court entraînement.",
       "REMEMBER_NOTE": "Rappel : seule la flèche au centre compte. Ignorez les symboles sur les côtés.",
       "DURATION_NOTE": "Le test complet dure environ 5 minutes sans pause.",
@@ -93,6 +93,9 @@
       "REMAINING": "Essais restants:",
       "COUNTDOWN": "Reprise dans:",
       "PRESS_TO_CONTINUE": "Ou appuyez sur la barre d'espace pour continuer immédiatement"
+    },
+    "COUNTDOWN": {
+      "GO": "Go !"
     },
     "SCROLL_DOWN": "↓ Défiler vers le bas",
     "SCROLL_UP": "↑ Défiler vers le haut",

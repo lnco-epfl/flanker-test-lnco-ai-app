@@ -8,6 +8,7 @@ import { AllSettingsType } from '@/modules/context/SettingsContext';
 import { ExperimentState } from '../jspsych/experiment-state-class';
 import i18n from '../jspsych/i18n';
 import { breakTrial } from '../trials/break-trial';
+import { buildCountdown } from '../trials/countdown-trial';
 import FlankerStimulusPlugin from '../trials/flanker-stimulus-trial';
 import { Timeline } from '../utils/types';
 
@@ -58,6 +59,9 @@ export const buildMainTask = (
       narration.stop();
     },
   });
+
+  // Countdown before main task trials begin
+  timeline.push(buildCountdown(jsPsych));
 
   // Get the full sequence
   const trials = state.getTrials();
