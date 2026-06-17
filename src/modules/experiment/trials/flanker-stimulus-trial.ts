@@ -4,6 +4,7 @@ import {
   ExperimentState,
   FlankerCondition,
 } from '../jspsych/experiment-state-class';
+import i18n from '../jspsych/i18n';
 import { TIMING } from '../utils/constants';
 
 const info = {
@@ -49,6 +50,10 @@ const info = {
       type: ParameterType.COMPLEX,
       default: undefined,
     },
+    show_training_feedback: {
+      type: ParameterType.BOOL,
+      default: false,
+    },
   },
 };
 
@@ -75,20 +80,17 @@ class FlankerStimulusPlugin implements JsPsychPlugin<Info> {
     const element = displayElement;
     element.className = `flanker-trial font-${calibratedFontSize}`;
 
-    // Show fixation cross
     if (trial.show_fixation) {
       const fixationDiv = document.createElement('div');
       fixationDiv.className = 'fixation-cross';
       fixationDiv.innerHTML = '+';
       displayElement.appendChild(fixationDiv);
 
-      // Show fixation, then show stimulus
       this.jsPsych.pluginAPI.setTimeout(() => {
         fixationDiv.remove();
         this.displayStimulus(displayElement, trial, state);
       }, TIMING.FIXATION_DURATION);
     } else {
-      // Show stimulus immediately
       this.displayStimulus(displayElement, trial, state);
     }
   }
@@ -115,6 +117,23 @@ class FlankerStimulusPlugin implements JsPsychPlugin<Info> {
         stimulusDiv.style.display = 'none';
         FlankerStimulusPlugin.togglePhotoDiode(false);
       }
+    };
+
+    const showFeedback = (type: 'correct' | 'incorrect' | 'miss'): void => {
+      const feedbackDiv = document.createElement('div');
+      if (type === 'correct') {
+        feedbackDiv.className = 'nback-trial-feedback--correct';
+        feedbackDiv.textContent = '✓';
+      } else if (type === 'incorrect') {
+        feedbackDiv.className = 'nback-trial-feedback--incorrect';
+        feedbackDiv.textContent = i18n.t(
+          'PRACTICE.TRIAL_FEEDBACK_FALSE_POSITIVE',
+        );
+      } else {
+        feedbackDiv.className = 'nback-trial-feedback--incorrect';
+        feedbackDiv.textContent = i18n.t('PRACTICE.TRIAL_FEEDBACK_MISS');
+      }
+      displayElement.appendChild(feedbackDiv);
     };
 
     const endTrial = (): void => {
@@ -152,33 +171,49 @@ class FlankerStimulusPlugin implements JsPsychPlugin<Info> {
       this.jsPsych.finishTrial(trialData);
     };
 
+    // Feedback on response: visible for at least 1000ms. The ITI acts as the
+    // response window, so we wait max(1000, ITI) from the moment of the response.
+    const scheduleEndAfterResponse = (): void => {
+      this.jsPsych.pluginAPI.setTimeout(
+        () => {
+          endTrial();
+        },
+        Math.max(
+          1000,
+          TIMING.LATE_RESPONSE_BUFFER + trial.inter_trial_interval,
+        ),
+      );
+    };
+
     const keyboardListener = (e: KeyboardEvent): void => {
       if (!this.responseAllowed || this.responseGiven) return;
+
+      let pressedDirection: 'left' | 'right' | null = null;
       if (
         e.key === 'ArrowLeft' &&
         trial.valid_responses.includes('ArrowLeft')
       ) {
-        this.responseGiven = true;
-        response = 'left';
-        this.responseTime = performance.now() - this.startTime;
-        removeStimulus();
-        e.preventDefault();
-
-        // End trial after late response buffer + ITI
-        this.jsPsych.pluginAPI.setTimeout(() => {
-          endTrial();
-        }, TIMING.LATE_RESPONSE_BUFFER + trial.inter_trial_interval);
+        pressedDirection = 'left';
       } else if (
         e.key === 'ArrowRight' &&
         trial.valid_responses.includes('ArrowRight')
       ) {
-        this.responseGiven = true;
-        response = 'right';
-        this.responseTime = performance.now() - this.startTime;
-        removeStimulus();
-        e.preventDefault();
+        pressedDirection = 'right';
+      }
 
-        // End trial after late response buffer + ITI
+      if (!pressedDirection) return;
+
+      this.responseGiven = true;
+      response = pressedDirection;
+      this.responseTime = performance.now() - this.startTime;
+      removeStimulus();
+      e.preventDefault();
+
+      if (trial.show_training_feedback) {
+        const isCorrect = response === trial.correct_response;
+        showFeedback(isCorrect ? 'correct' : 'incorrect');
+        scheduleEndAfterResponse();
+      } else {
         this.jsPsych.pluginAPI.setTimeout(() => {
           endTrial();
         }, TIMING.LATE_RESPONSE_BUFFER + trial.inter_trial_interval);
@@ -202,10 +237,15 @@ class FlankerStimulusPlugin implements JsPsychPlugin<Info> {
       this.responseTime = performance.now() - this.startTime;
       removeStimulus();
 
-      // End trial after late response buffer + ITI
-      this.jsPsych.pluginAPI.setTimeout(() => {
-        endTrial();
-      }, TIMING.LATE_RESPONSE_BUFFER + trial.inter_trial_interval);
+      if (trial.show_training_feedback) {
+        const isCorrect = response === trial.correct_response;
+        showFeedback(isCorrect ? 'correct' : 'incorrect');
+        scheduleEndAfterResponse();
+      } else {
+        this.jsPsych.pluginAPI.setTimeout(() => {
+          endTrial();
+        }, TIMING.LATE_RESPONSE_BUFFER + trial.inter_trial_interval);
+      }
     };
 
     document.addEventListener('keydown', keyboardListener);
@@ -215,14 +255,28 @@ class FlankerStimulusPlugin implements JsPsychPlugin<Info> {
 
     FlankerStimulusPlugin.togglePhotoDiode(true);
 
-    // Remove stimulus after display_duration if no response yet
+    // After the stimulus display window, hide the stimulus. The ITI continues
+    // as the response window. Once the full ITI has elapsed with no response,
+    // close the response window and (in practice) show miss feedback.
     this.jsPsych.pluginAPI.setTimeout(() => {
       if (!this.responseGiven) {
         removeStimulus();
 
-        // End trial after late response buffer + ITI
         this.jsPsych.pluginAPI.setTimeout(() => {
-          endTrial();
+          if (!this.responseGiven) {
+            if (trial.show_training_feedback) {
+              // Close response window before feedback is visible
+              this.responseAllowed = false;
+              document.removeEventListener('keydown', keyboardListener);
+              displayElement.removeEventListener('click', mouseListener);
+              showFeedback('miss');
+              this.jsPsych.pluginAPI.setTimeout(() => {
+                endTrial();
+              }, 1000);
+            } else {
+              endTrial();
+            }
+          }
         }, TIMING.LATE_RESPONSE_BUFFER + trial.inter_trial_interval);
       }
     }, trial.display_duration);

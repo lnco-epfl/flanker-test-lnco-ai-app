@@ -76,7 +76,9 @@
       "READY_TITLE": "Prêt-e à commencer ?",
       "READY_MESSAGE": "Vous allez maintenant commencer la tâche principale. Vos réponses ne seront plus affichées. Faites au mieux et restez concentré-e !",
       "CONTINUE_TITLE": "Prêt à continuer ?",
-      "PRESS_TO_CONTINUE": "Appuyez sur la barre d'espace pour continuer vers la tâche principale"
+      "PRESS_TO_CONTINUE": "Appuyez sur la barre d'espace pour continuer vers la tâche principale",
+      "TRIAL_FEEDBACK_FALSE_POSITIVE": "Incorrect",
+      "TRIAL_FEEDBACK_MISS": "Raté"
     },
     "MAIN_TASK": {
       "READY_TITLE": "Fin de l'entraînement",
@@ -95,7 +97,8 @@
       "PRESS_TO_CONTINUE": "Ou appuyez sur la barre d'espace pour continuer immédiatement"
     },
     "COUNTDOWN": {
-      "GO": "Go !"
+      "GET_READY": "Prêts...",
+      "GO": "Partez !"
     },
     "SCROLL_DOWN": "↓ Défiler vers le bas",
     "SCROLL_UP": "↑ Défiler vers le haut",

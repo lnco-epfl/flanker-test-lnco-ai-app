@@ -66,11 +66,16 @@
       "PRESS_TO_CONTINUE": "Or press spacebar to continue immediately"
     },
     "COUNTDOWN": {
+      "GET_READY": "Get ready...",
       "GO": "Go!"
     },
     "SCROLL_DOWN": "↓ Scroll down",
     "SCROLL_UP": "↑ Scroll up",
     "PROGRESS_BAR_MESSAGE": "Completion Progress",
+    "PRACTICE": {
+      "TRIAL_FEEDBACK_FALSE_POSITIVE": "Incorrect",
+      "TRIAL_FEEDBACK_MISS": "Miss"
+    },
     "SETTINGS": {
       "FLANKER_TITLE": "Flanker Task Settings",
       "CONGRUENT_PERCENTAGE": "Congruent Trials (%)",

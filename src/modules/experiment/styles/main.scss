@@ -410,36 +410,50 @@ body {
   margin: 0.5rem auto 1rem;
 }
 
-/* Countdown before practice and main task */
-.flanker-countdown {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 300px;
-}
-
-.countdown-number {
+/* Get-ready / Go screens before practice and main task */
+.countdown-get-ready {
+  font-size: 3rem;
   font-weight: bold;
-  color: #000000;
-  line-height: 1;
+  color: #555555;
+  text-align: center;
   user-select: none;
-  font-size: calc(10rem * var(--flanker-calibration-scale, 1)) !important;
 }
 
-.countdown-pop {
-  animation: countdown-pop 0.25s ease-out;
+.countdown-go {
+  font-size: 4rem;
+  font-weight: bold;
+  color: #2e7d32;
+  text-align: center;
+  user-select: none;
 }
 
-@keyframes countdown-pop {
+/* Per-trial practice feedback */
+@keyframes feedback-scale-in {
   from {
-    transform: scale(1.5);
-    opacity: 0.4;
+    opacity: 0;
+    transform: scale(0.6);
   }
 
   to {
-    transform: scale(1);
     opacity: 1;
+    transform: scale(1);
   }
+}
+
+.nback-trial-feedback--correct {
+  color: #2e7d32;
+  font-size: 4rem;
+  font-weight: bold;
+  text-align: center;
+  animation: feedback-scale-in 0.15s ease-out;
+}
+
+.nback-trial-feedback--incorrect {
+  color: #c62828;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  animation: feedback-scale-in 0.15s ease-out;
 }
 
 /* Scroll hint buttons — visible only when content overflows the viewport */

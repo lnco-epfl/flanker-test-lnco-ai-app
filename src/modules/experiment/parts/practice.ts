@@ -7,8 +7,8 @@ import { AllSettingsType } from '@/modules/context/SettingsContext';
 
 import { ExperimentState } from '../jspsych/experiment-state-class';
 import i18n from '../jspsych/i18n';
-import { buildCountdown } from '../trials/countdown-trial';
 import FlankerStimulusPlugin from '../trials/flanker-stimulus-trial';
+import { buildGetReadyGo } from '../trials/get-ready-go-trials';
 import { practiceFeedbackTrial } from '../trials/practice-feedback-trial';
 import { Timeline } from '../utils/types';
 
@@ -48,10 +48,8 @@ export const buildPractice = (
   // Get the full sequence
   const trials = state.getTrials();
 
-  // Countdown before practice trials begin
-  if (jsPsych) {
-    timeline.push(buildCountdown(jsPsych));
-  }
+  // Get-ready / Go screens before practice trials begin
+  timeline.push(...buildGetReadyGo());
 
   // Create practice trials
   for (let i = 0; i < trials.length; i += 1) {
@@ -69,6 +67,7 @@ export const buildPractice = (
       correct_response: trial.correctResponse,
       trial_index: i,
       state,
+      show_training_feedback: true,
       on_finish: () => {
         // Save data after each trial
         if (updateData && jsPsych) {
