@@ -96,11 +96,11 @@ export const ExperimentLoader: FC = () => {
 
   const isCompleted = (
     trials: TrialData[],
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    _settings: AllSettingsType,
+    currentSettings: AllSettingsType,
   ): boolean =>
-    // For N-back, check if there's any completed data
-    trials.length > 0 && trials.some((trial) => trial.correct !== undefined);
+    trials.length > 0 &&
+    trials.filter((trial) => trial.practice === false).length >=
+      currentSettings.flankerSettings.numberOfTrials;
   const updateData = (
     rawData: DataCollection,
     // eslint-disable-next-line @typescript-eslint/no-shadow

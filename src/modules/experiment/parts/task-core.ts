@@ -8,8 +8,8 @@ import { AllSettingsType } from '@/modules/context/SettingsContext';
 import { ExperimentState } from '../jspsych/experiment-state-class';
 import i18n from '../jspsych/i18n';
 import { breakTrial } from '../trials/break-trial';
-import { buildCountdown } from '../trials/countdown-trial';
 import FlankerStimulusPlugin from '../trials/flanker-stimulus-trial';
+import { buildGetReadyGo } from '../trials/get-ready-go-trials';
 import { Timeline } from '../utils/types';
 
 /**
@@ -60,8 +60,8 @@ export const buildMainTask = (
     },
   });
 
-  // Countdown before main task trials begin
-  timeline.push(buildCountdown(jsPsych));
+  // Get-ready / Go screens before main task trials begin
+  timeline.push(...buildGetReadyGo());
 
   // Get the full sequence
   const trials = state.getTrials();
