@@ -26,6 +26,7 @@
       "RESPONSE_LEFT": "Si la flèche centrale pointe vers la GAUCHE, appuyez sur la touche GAUCHE (←) aussi vite que possible.",
       "RESPONSE_RIGHT": "Si la flèche centrale pointe vers la DROITE, appuyez sur la touche DROITE (→) aussi vite que possible.",
       "IMAGE_INTRO": "Voici une image des touches GAUCHE et DROITE sur votre clavier :",
+      "ARROW_KEYS_IMAGE": "assets/images/arrow-keys-fr.png",
       "KEYBOARD_NOTE": "Pour faciliter vos réponses, nous vous recommandons d'utiliser un doigt par touche fléchée pendant l'exercice.",
       "EXAMPLES_TITLE": "Voici quelques exemples (regardez uniquement, vous ne devez rien faire pour l'instant) :",
       "EXAMPLES_SUBTEXT": "Les symboles sur les côtés ne sont pas importants. Seule la flèche du centre est importante.",

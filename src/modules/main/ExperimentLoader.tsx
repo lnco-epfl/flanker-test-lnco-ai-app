@@ -118,7 +118,7 @@ export const ExperimentLoader: FC = () => {
       'assets/images/flanker_congruent.png',
       'assets/images/flanker_incongruent.png',
       'assets/images/flanker_neutral.png',
-      'assets/images/arrow-keys.png',
+      t('FLANKER.ARROW_KEYS_IMAGE'),
       'assets/images/hand.png',
     ],
     audio: [
