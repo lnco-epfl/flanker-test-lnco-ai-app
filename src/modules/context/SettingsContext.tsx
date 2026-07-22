@@ -8,6 +8,7 @@ export type GeneralSettingsType = {
   skipInstructions: boolean;
   skipPractice: boolean;
   language: 'en' | 'fr';
+  enableNarration: boolean;
 };
 
 export type FlankerSettingsType = {
@@ -61,6 +62,7 @@ const defaultSettingsValues: AllSettingsType = {
     skipInstructions: false,
     skipPractice: false,
     language: 'en',
+    enableNarration: true,
   },
   flankerSettings: {
     numberOfTrials: 60,

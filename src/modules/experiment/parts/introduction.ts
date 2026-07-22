@@ -41,7 +41,7 @@ const taskInstructions = (
         <p>${i18n.t('FLANKER.RESPONSE_LEFT')}</p>
         <p>${i18n.t('FLANKER.RESPONSE_RIGHT')}</p>
         <p>${i18n.t('FLANKER.IMAGE_INTRO')}</p>
-        <img src="assets/images/arrow-keys.png" alt="Arrow keys" class="flanker-instruction-img" />
+        <img src="${i18n.t('FLANKER.ARROW_KEYS_IMAGE')}" alt="Arrow keys" class="flanker-instruction-img" />
         <p>${i18n.t('FLANKER.KEYBOARD_NOTE')}</p>
         <img src="assets/images/hand.png" alt="Keyboard layout" class="flanker-instruction-img" />
         <p>${i18n.t('FLANKER.CLICK_TO_CONTINUE')}</p>
