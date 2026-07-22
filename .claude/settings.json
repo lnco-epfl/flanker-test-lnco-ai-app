@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('src/langs/en.json','utf8'\\)\\); console.log\\('valid JSON'\\)\")",
-      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('src/langs/en.json','utf8'\\)\\); JSON.parse\\(require\\('fs'\\).readFileSync\\('src/langs/fr.json','utf8'\\)\\); console.log\\('both valid'\\)\")"
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('src/langs/en.json','utf8'\\)\\); JSON.parse\\(require\\('fs'\\).readFileSync\\('src/langs/fr.json','utf8'\\)\\); console.log\\('both valid'\\)\")",
+      "Bash(yarn eslint *)"
     ]
   }
 }

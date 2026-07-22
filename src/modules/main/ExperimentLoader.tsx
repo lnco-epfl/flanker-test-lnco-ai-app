@@ -26,6 +26,14 @@ export const ExperimentLoader: FC = () => {
   const { t } = useTranslation();
   const narration = useRef(new AudioNarration()).current;
   const settings = useSettings();
+  const narrationEnabled = settings.generalSettings.enableNarration;
+
+  useEffect(() => {
+    if (!narrationEnabled) {
+      // eslint-disable-next-line no-param-reassign
+      narration.play = () => {};
+    }
+  }, [narrationEnabled, narration]);
   const localContext = useLocalContext();
   const { data: appContextData } = hooks.useAppContext();
   const screenCalibration = parseScreenCalibration(localContext);
@@ -223,7 +231,9 @@ export const ExperimentLoader: FC = () => {
       <div className="player-scroll-container" ref={scrollRef}>
         <div id="jspsych-display-element" />
       </div>
-      <AudioNarrationControls narration={narration} position="bottom-left" />
+      {narrationEnabled && (
+        <AudioNarrationControls narration={narration} position="bottom-left" />
+      )}
       {canScrollDown && (
         <button
           type="button"
