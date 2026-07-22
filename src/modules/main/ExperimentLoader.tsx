@@ -120,6 +120,8 @@ export const ExperimentLoader: FC = () => {
       'assets/images/flanker_neutral.png',
       t('FLANKER.ARROW_KEYS_IMAGE'),
       'assets/images/hand.png',
+      'assets/images/arrow-keys-en.png',
+      'assets/images/arrow-keys-fr.png',
     ],
     audio: [
       'assets/audio/flanker_practice_result.mp3',
