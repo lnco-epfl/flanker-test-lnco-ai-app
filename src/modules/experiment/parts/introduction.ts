@@ -5,7 +5,7 @@ import type { JsPsych } from 'jspsych';
 import { AudioNarration } from 'jspsych-audio-narration';
 
 import { ExperimentState } from '../jspsych/experiment-state-class';
-import i18n from '../jspsych/i18n';
+import i18n, { getNarrationSrc } from '../jspsych/i18n';
 import { Timeline, Trial } from '../utils/types';
 
 /**
@@ -48,7 +48,7 @@ const taskInstructions = (
       </div>
     `,
     on_start: () => {
-      narration.play('assets/audio/flanker_instructions_page1.mp3');
+      narration.play(getNarrationSrc('flanker_instructions_page1'));
     },
     on_finish: () => {
       narration.stop();
@@ -74,7 +74,7 @@ const taskInstructions = (
       </div>
     `,
     on_start: () => {
-      narration.play('assets/audio/flanker_instructions_page2.mp3');
+      narration.play(getNarrationSrc('flanker_instructions_page2'));
     },
     on_finish: () => {
       narration.stop();
@@ -98,7 +98,7 @@ const taskInstructions = (
       </div>
     `,
     on_start: () => {
-      narration.play('assets/audio/flanker_instructions_page3.mp3');
+      narration.play(getNarrationSrc('flanker_instructions_page3'));
     },
     on_finish: () => {
       narration.stop();
