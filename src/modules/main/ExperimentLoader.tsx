@@ -20,6 +20,7 @@ import { TrialData } from '../config/appResults';
 import useExperimentResults from '../context/ExperimentContext';
 import { AllSettingsType, useSettings } from '../context/SettingsContext';
 import { run } from '../experiment/experiment';
+import { getAllNarrationSrcs } from '../experiment/jspsych/i18n';
 import { resolveLink } from '../experiment/utils/utils';
 
 export const ExperimentLoader: FC = () => {
@@ -131,16 +132,10 @@ export const ExperimentLoader: FC = () => {
       'assets/images/arrow-keys-en.png',
       'assets/images/arrow-keys-fr.png',
     ],
-    audio: [
-      'assets/audio/flanker_practice_result.mp3',
-      'assets/audio/flanker_practice_repeat.mp3',
-      'assets/audio/flanker_practice_comprehension.mp3',
-      'assets/audio/flanker_main_ready.mp3',
-      'assets/audio/flanker_main_end.mp3',
-      'assets/audio/flanker_instructions_page1.mp3',
-      'assets/audio/flanker_instructions_page2.mp3',
-      'assets/audio/flanker_instructions_page3.mp3',
-    ],
+    // Preload both language variants of every narration clip — this runs
+    // before settings-driven language is applied, so i18n.language can't be
+    // relied on yet to pick just one.
+    audio: getAllNarrationSrcs(),
     video: [],
     misc: [],
   };

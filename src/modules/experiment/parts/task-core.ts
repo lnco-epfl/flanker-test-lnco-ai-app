@@ -6,7 +6,7 @@ import { AudioNarration } from 'jspsych-audio-narration/dist/AudioNarration';
 import { AllSettingsType } from '@/modules/context/SettingsContext';
 
 import { ExperimentState } from '../jspsych/experiment-state-class';
-import i18n from '../jspsych/i18n';
+import i18n, { getNarrationSrc } from '../jspsych/i18n';
 import { breakTrial } from '../trials/break-trial';
 import FlankerStimulusPlugin from '../trials/flanker-stimulus-trial';
 import { buildGetReadyGo } from '../trials/get-ready-go-trials';
@@ -53,7 +53,7 @@ export const buildMainTask = (
     `,
     choices: [' '],
     on_start: () => {
-      narration.play('assets/audio/flanker_main_ready.mp3');
+      narration.play(getNarrationSrc('flanker_main_ready'));
     },
     on_finish: () => {
       narration.stop();
@@ -121,7 +121,7 @@ export const buildMainTask = (
     `,
     choices: [' '],
     on_start: () => {
-      narration.play('assets/audio/flanker_main_end.mp3');
+      narration.play(getNarrationSrc('flanker_main_end'));
     },
     on_finish: () => {
       narration.stop();

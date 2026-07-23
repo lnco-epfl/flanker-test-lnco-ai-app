@@ -6,7 +6,7 @@ import { AudioNarration } from 'jspsych-audio-narration';
 import { AllSettingsType } from '@/modules/context/SettingsContext';
 
 import { ExperimentState } from '../jspsych/experiment-state-class';
-import i18n from '../jspsych/i18n';
+import i18n, { getNarrationSrc } from '../jspsych/i18n';
 import FlankerStimulusPlugin from '../trials/flanker-stimulus-trial';
 import { buildGetReadyGo } from '../trials/get-ready-go-trials';
 import { practiceFeedbackTrial } from '../trials/practice-feedback-trial';
@@ -110,7 +110,7 @@ export const buildPractice = (
     data: { trial_type: 'comprehension_check' },
     css_classes: ['flanker-comprehension'],
     on_start: () => {
-      narration.play('assets/audio/flanker_practice_comprehension.mp3');
+      narration.play(getNarrationSrc('flanker_practice_comprehension'));
     },
     on_finish: () => {
       narration.stop();
@@ -126,7 +126,7 @@ export const buildPractice = (
         stimulus: `<div class="flanker-feedback"><p>${i18n.t('PRACTICE.REPEAT_NOTICE')}</p></div>`,
         choices: [i18n.t('FLANKER.CONTINUE_BUTTON')],
         on_start: () => {
-          narration.play('assets/audio/flanker_practice_repeat.mp3');
+          narration.play(getNarrationSrc('flanker_practice_repeat'));
         },
         on_finish: () => {
           narration.stop();

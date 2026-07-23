@@ -3,7 +3,7 @@ import htmlKeyboardResponse from '@jspsych/plugin-html-keyboard-response';
 import { AudioNarration } from 'jspsych-audio-narration';
 
 import { ExperimentState } from '../jspsych/experiment-state-class';
-import i18n from '../jspsych/i18n';
+import i18n, { getNarrationSrc } from '../jspsych/i18n';
 import { Trial } from '../utils/types';
 
 export const practiceFeedbackTrial = (
@@ -30,7 +30,7 @@ export const practiceFeedbackTrial = (
   },
   choices: [' '],
   on_start: () => {
-    narration.play('assets/audio/flanker_practice_result.mp3');
+    narration.play(getNarrationSrc('flanker_practice_result'));
   },
   on_finish: () => {
     narration.stop();
